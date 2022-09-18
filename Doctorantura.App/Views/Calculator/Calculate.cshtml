@@ -1,0 +1,46 @@
+﻿@using Doctorantura.App.ViewModels
+@model CalculateVM
+@{
+    ViewData["Title"] = "Calculate";
+}
+
+<h1>Calculate</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th scope="col">G</th>
+            @foreach (var column in @Model.ColumnNums)
+            {
+                <th scope="col">@column.Name</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+    @*    <tr>
+            <td>K1</td>
+            @foreach (var column in @Model.ColumnNums)
+            {
+                <td>@column.Value</td>
+            }
+        </tr>*@
+
+
+
+        @foreach (var grouppedColumnId in Model.GrouppedColumnIds)
+        {
+            <tr>
+                <td>@Model.ColumnNums.Where(x=>x.ID==grouppedColumnId).FirstOrDefault().Name</td>
+                @foreach (var line in Model.LineNums.Where(x => x.ColumnNumId == grouppedColumnId))
+                {
+                    <td>
+                        @line.Value
+                    </td>
+                }
+            </tr>
+
+
+        }
+
+    </tbody>
+</table>
