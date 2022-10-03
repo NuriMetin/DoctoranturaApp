@@ -7,34 +7,36 @@ namespace Doctorantura.App.Context
     {
         public AppDbContext(DbContextOptions<AppDbContext> dbContextOptions) : base(dbContextOptions) { }
 
-        public DbSet<LineNum> LineNums { get; set; }
-        public DbSet<ColumnNum> ColumnNums { get; set; }
+        public DbSet<Line> Lines { get; set; }
+        public DbSet<Column> Columns { get; set; }
+        public DbSet<ColumnLine> ColumnsLines { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<ColumnNum>().HasData(
-                new ColumnNum { ID = 1, Name = "K1", Value = 1 },
-                new ColumnNum { ID = 2, Name = "K2", Value = 2 },
-                new ColumnNum { ID = 3, Name = "K3", Value = 3 },
-                new ColumnNum { ID = 4, Name = "K4", Value = 3 },
-                new ColumnNum { ID = 5, Name = "K5", Value = 5 },
-                new ColumnNum { ID = 6, Name = "K6", Value = 7 },
-                new ColumnNum { ID = 7, Name = "K7", Value = 9 },
-                new ColumnNum { ID = 8, Name = "K8", Value = 9 }
+            builder.Entity<Column>().HasData(
+                new Column { ID = 1, Name = "K1", Row = 1 },
+                new Column { ID = 2, Name = "K2", Row = 2 },
+                new Column { ID = 3, Name = "K3", Row = 3 },
+                new Column { ID = 4, Name = "K4", Row = 4 },
+                new Column { ID = 5, Name = "K5", Row = 5 },
+                new Column { ID = 6, Name = "K6", Row = 6 },
+                new Column { ID = 7, Name = "K7", Row = 7 },
+                new Column { ID = 8, Name = "K8", Row = 8 }
                 );
 
-            //builder.Entity<LineNum>().HasData(
-            //    new LineNum { ID = 1, Name = "K1", Value = 1 },
-            //    new LineNum { ID = 2, Name = "K2", Value = 2 },
-            //    new LineNum { ID = 3, Name = "K3", Value = 3 },
-            //    new LineNum { ID = 4, Name = "K4", Value = 3 },
-            //    new LineNum { ID = 5, Name = "K5", Value = 5 },
-            //    new LineNum { ID = 6, Name = "K6", Value = 7 },
-            //    new LineNum { ID = 7, Name = "K7", Value = 9 },
-            //    new LineNum { ID = 8, Name = "K8", Value = 9 }
-            //    );
+            builder.Entity<Line>().HasData(
+                new Line { ID = 1, Name = "K1", Row = 1 },
+                new Line { ID = 2, Name = "K2", Row = 2 },
+                new Line { ID = 3, Name = "K3", Row = 3 },
+                new Line { ID = 4, Name = "K4", Row = 4 },
+                new Line { ID = 5, Name = "K5", Row = 5 },
+                new Line { ID = 6, Name = "K6", Row = 6 },
+                new Line { ID = 7, Name = "K7", Row = 7 },
+                new Line { ID = 8, Name = "K8", Row = 8 }
+                );
         }
     }
 }

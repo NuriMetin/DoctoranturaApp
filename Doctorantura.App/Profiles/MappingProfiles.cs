@@ -9,11 +9,11 @@ namespace Doctorantura.App.Profiles
     {
         public MappingProfiles()
         {
-            CreateMap<ColumnNum, ColumnNumCreateDto>().ReverseMap();
-            CreateMap<ColumnNum, ColumnNumUpdateDto>().ReverseMap();
+            CreateMap<Column, ColumnNumCreateDto>().ReverseMap();
+            CreateMap<Column, ColumnNumUpdateDto>().ReverseMap();
 
-            CreateMap<LineNum, LineNumCreateDto>().ReverseMap();
-            CreateMap<LineNum, LineNumUpdateDto>().ReverseMap();
+            CreateMap<Line, LineNumCreateDto>().ReverseMap();
+            CreateMap<Line, LineNumUpdateDto>().ReverseMap();
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using Doctorantura.App.Context;
 using Doctorantura.App.Models;
+using Doctorantura.App.Services;
 using Doctorantura.App.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,34 +12,39 @@ namespace Doctorantura.App.Controllers
 {
     public class CalculatorController : Controller
     {
-        private readonly AppDbContext _appDbContext;
+        private readonly CalculateManager _calculateManager;
 
-        public CalculatorController(AppDbContext appDbContext)
+        public CalculatorController(CalculateManager calculateManager)
         {
-            _appDbContext = appDbContext;
+            _calculateManager = calculateManager;
         }
 
         public async Task<IActionResult> Calculate()
         {
 
+            var calculateVm = await _calculateManager.GetAllAsync();
 
-            var data = await _appDbContext.ColumnNums
-                        .Include(x => x.LineNums)
-                        .ToListAsync();
 
-            var grouppedColumnIds = _appDbContext.LineNums
-                       .GroupBy(i => i.ColumnNumId)
-                       .Select(g=>g.Key)
-                       .ToList();
+            return View(calculateVm);
+        }
 
-            CalculateVM calculateVM = new CalculateVM
+        public async Task<IActionResult> Insert(int columnNo, int lineNo, double val, string columnName)
+        {
+            try
             {
-                ColumnNums = data,
-                LineNums = await _appDbContext.LineNums.ToListAsync(),
-                GrouppedColumnIds= grouppedColumnIds
-            };
+                if(columnNo != 0 && lineNo!=0 && val!=0 && !String.IsNullOrEmpty(columnName))
+                {
+                    await _calculateManager.InsertAsync(columnNo, lineNo, val, columnName);
+                    await _calculateManager.InsertAsync(lineNo, columnNo, 1 / val, columnName);
+                }
+            }
 
-            return View(calculateVM);
+            catch (System.Exception exp)
+            {
+                return Json(new { response = exp.Message });
+            }
+
+            return Json(new { response = "success" });
         }
     }
 }

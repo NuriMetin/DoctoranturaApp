@@ -7,12 +7,12 @@ using Doctorantura.App.Interfaces.Repositories;
 
 namespace Doctorantura.App.Repositories
 {
-    public class LineNumRepository : ILineNumRepository
+    public class LineRepository : ILineNumRepository
     {
         private readonly AppDbContext _appDbContext;
         private readonly IMapper _mapper;
 
-        public LineNumRepository(AppDbContext appDbContext, IMapper mapper)
+        public LineRepository(AppDbContext appDbContext, IMapper mapper)
         {
             _appDbContext = appDbContext;
             _mapper = mapper;
@@ -20,23 +20,23 @@ namespace Doctorantura.App.Repositories
 
         public async Task AddLineNumAsync(LineNumCreateDto lineNumDto)
         {
-            LineNum lineNum = _mapper.Map<LineNum>(lineNumDto);
-            await _appDbContext.LineNums.AddAsync(lineNum);
+            Line lineNum = _mapper.Map<Line>(lineNumDto);
+            await _appDbContext.Lines.AddAsync(lineNum);
             await _appDbContext.SaveChangesAsync();
         }
 
         public async Task UpdateLineNumAsync(LineNumUpdateDto lineNumDto)
         {
-            LineNum lineNum = await _appDbContext.LineNums.FindAsync(lineNumDto.ID);
-            lineNum = _mapper.Map<LineNum>(lineNumDto);
+            Line lineNum = await _appDbContext.Lines.FindAsync(lineNumDto.ID);
+            lineNum = _mapper.Map<Line>(lineNumDto);
 
             await _appDbContext.SaveChangesAsync();
         }
 
         public async Task DeleteLineNumAsync(int id)
         {
-            LineNum lineNum = await _appDbContext.LineNums.FindAsync(id);
-            _appDbContext.LineNums.Remove(lineNum);
+            Line lineNum = await _appDbContext.Lines.FindAsync(id);
+            _appDbContext.Lines.Remove(lineNum);
 
             await _appDbContext.SaveChangesAsync();
         }

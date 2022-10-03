@@ -6,8 +6,8 @@ namespace Doctorantura.App.ViewModels
 {
     public class CalculateVM
     {
-        public List<ColumnNum> ColumnNums { get; set; }
-        public virtual List<LineNum> LineNums { get; set; }
+        public List<Column> ColumnNums { get; set; }
+        public virtual List<Line> LineNums { get; set; }
         public List<int> GrouppedColumnIds { get; set; }
     }
 }

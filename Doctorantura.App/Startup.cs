@@ -2,6 +2,7 @@ using Doctorantura.App.Context;
 using Doctorantura.App.Interfaces.Repositories;
 using Doctorantura.App.Repositories;
 using Doctorantura.App.Repository;
+using Doctorantura.App.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -30,8 +31,9 @@ namespace Doctorantura.App
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            services.AddTransient<IColumnNumRepository, ColumnNumRepository>();
-            services.AddTransient<ILineNumRepository, LineNumRepository>();
+            services.AddTransient<IColumnNumRepository, ColumnRepository>();
+            services.AddTransient<ILineNumRepository, LineRepository>();
+            services.AddTransient<CalculateManager>();
 
             services.AddDbContext<AppDbContext>(options =>
             {

@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Doctorantura.App.Repository
 {
-    public class ColumnNumRepository: IColumnNumRepository
+    public class ColumnRepository: IColumnNumRepository
     {
         private readonly AppDbContext _appDbContext;
         private readonly IMapper _mapper;
 
-        public ColumnNumRepository(AppDbContext appDbContext, IMapper mapper)
+        public ColumnRepository(AppDbContext appDbContext, IMapper mapper)
         {
             _appDbContext = appDbContext;
             _mapper = mapper;
@@ -20,23 +20,23 @@ namespace Doctorantura.App.Repository
 
         public async Task AddColumnNumAsync(ColumnNumCreateDto columnNumDto)
         {
-            ColumnNum columnNum = _mapper.Map<ColumnNum>(columnNumDto);
-            await _appDbContext.ColumnNums.AddAsync(columnNum);
+            Column columnNum = _mapper.Map<Column>(columnNumDto);
+            await _appDbContext.Columns.AddAsync(columnNum);
             await _appDbContext.SaveChangesAsync();
         }
 
         public async Task UpdateColumnNumAsync(ColumnNumUpdateDto columnNumDto)
         {
-            ColumnNum columnNum = await _appDbContext.ColumnNums.FindAsync(columnNumDto.ID);
-            columnNum = _mapper.Map<ColumnNum>(columnNumDto);
+            Column columnNum = await _appDbContext.Columns.FindAsync(columnNumDto.ID);
+            columnNum = _mapper.Map<Column>(columnNumDto);
         
             await _appDbContext.SaveChangesAsync();
         }
 
         public async Task DeleteColumnNumAsync(int id)
         {
-            ColumnNum columnNum = await _appDbContext.ColumnNums.FindAsync(id);
-            _appDbContext.ColumnNums.Remove(columnNum);
+            Column columnNum = await _appDbContext.Columns.FindAsync(id);
+            _appDbContext.Columns.Remove(columnNum);
 
             await _appDbContext.SaveChangesAsync();
         }
