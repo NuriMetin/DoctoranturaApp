@@ -34,56 +34,6 @@ namespace Doctorantura.App.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Columns");
-
-                    b.HasData(
-                        new
-                        {
-                            ID = 1,
-                            Name = "K1",
-                            Row = 1
-                        },
-                        new
-                        {
-                            ID = 2,
-                            Name = "K2",
-                            Row = 2
-                        },
-                        new
-                        {
-                            ID = 3,
-                            Name = "K3",
-                            Row = 3
-                        },
-                        new
-                        {
-                            ID = 4,
-                            Name = "K4",
-                            Row = 4
-                        },
-                        new
-                        {
-                            ID = 5,
-                            Name = "K5",
-                            Row = 5
-                        },
-                        new
-                        {
-                            ID = 6,
-                            Name = "K6",
-                            Row = 6
-                        },
-                        new
-                        {
-                            ID = 7,
-                            Name = "K7",
-                            Row = 7
-                        },
-                        new
-                        {
-                            ID = 8,
-                            Name = "K8",
-                            Row = 8
-                        });
                 });
 
             modelBuilder.Entity("Doctorantura.App.Models.ColumnLine", b =>
@@ -96,7 +46,13 @@ namespace Doctorantura.App.Migrations
                     b.Property<int>("ColumnId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ColumnNum")
+                        .HasColumnType("int");
+
                     b.Property<int>("LineId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LineNum")
                         .HasColumnType("int");
 
                     b.Property<double>("Value")
@@ -127,56 +83,42 @@ namespace Doctorantura.App.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Lines");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            ID = 1,
-                            Name = "K1",
-                            Row = 1
-                        },
-                        new
-                        {
-                            ID = 2,
-                            Name = "K2",
-                            Row = 2
-                        },
-                        new
-                        {
-                            ID = 3,
-                            Name = "K3",
-                            Row = 3
-                        },
-                        new
-                        {
-                            ID = 4,
-                            Name = "K4",
-                            Row = 4
-                        },
-                        new
-                        {
-                            ID = 5,
-                            Name = "K5",
-                            Row = 5
-                        },
-                        new
-                        {
-                            ID = 6,
-                            Name = "K6",
-                            Row = 6
-                        },
-                        new
-                        {
-                            ID = 7,
-                            Name = "K7",
-                            Row = 7
-                        },
-                        new
-                        {
-                            ID = 8,
-                            Name = "K8",
-                            Row = 8
-                        });
+            modelBuilder.Entity("Doctorantura.App.Models.LineSum", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("LineNum")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalSum")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("LinesSum");
+                });
+
+            modelBuilder.Entity("Doctorantura.App.Models.WLine", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("LineNum")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("WLines");
                 });
 
             modelBuilder.Entity("Doctorantura.App.Models.ColumnLine", b =>

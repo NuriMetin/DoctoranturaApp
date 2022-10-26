@@ -1,5 +1,5 @@
 ﻿@using Doctorantura.App.ViewModels
-@model IEnumerable<ColumnLine>
+@model CalculateVM
 @{
     ViewData["Title"] = "Calculate";
 }
@@ -11,111 +11,301 @@
 
 <input id="btn_add" type="button" class="col-12 btn btn-primary d-block mr-5" value="Sütun əlavə et">
 
-<table class="table">
-    <thead id="thead">
-        <tr class="tr_head">
-            <th scope="col">G</th>
-            @foreach (var columnId in @Model.GroupBy(x => x.ColumnId).Select(x => x.Key).ToList())
-            {
-                <th th_row="@Model.Where(x=>x.ColumnId==@columnId).Select(x=>x.Column.Row).FirstOrDefault()" scope="col">
-                    <input type="text" disabled value="@Model.Where(x=>x.ColumnId==@columnId).Select(x=>x.Column.Name).FirstOrDefault()" class="setFull">
-                </th>
-            }
-        </tr>
-    </thead>
+<div class="row">
+    <div class="col-10">
+        <table class="table">
+            <thead id="thead">
+                <tr class="tr_head">
+                    <th scope="col">G</th>
+                    @foreach (var columnNum in @Model.ColumnLines.GroupBy(x => x.ColumnNum).Select(x => x.Key).ToList())
+                    {
+                        <th th_row="@Model.ColumnLines.Where(x=>x.ColumnNum==columnNum).Select(x=>x.Column.Row).FirstOrDefault()" scope="col">
+                            <input type="text" value="@Model.ColumnLines.Where(x=>x.ColumnId==columnNum).Select(x=>x.Column.Name).FirstOrDefault()" class="setFull font-weight-bold">
+                        </th>
+                    }
+                </tr>
+            </thead>
 
-    <tbody id="tbody">
-        @foreach (var lineId in @Model.GroupBy(x => x.LineId).Select(x => x.Key).ToList())
-        {
-            <tr class="tr_tbody">
-                <td scope="col">
-                    <input type="text" disabled value="@Model.Where(x=>x.ColumnId==@lineId).Select(x=>x.Column.Name).FirstOrDefault()" class="setFull">
-                </td>
-                @foreach (var columnLine in @Model.Where(x => x.LineId == @lineId).OrderBy(x => x.Column.Row))
+            <tbody id="tbody">
+                @foreach (var lineNum in @Model.ColumnLines.GroupBy(x => x.LineNum).Select(x => x.Key).ToList())
                 {
-                    <td column="@columnLine.Column.Row" line="@columnLine.Line.Row">
-                        <input type="text" disabled value="@columnLine.Value" class="setFull">
-                    </td>
+                    <tr class="tr_tbody">
+                        <td scope="col">
+                            <input type="text" disabled value="@Model.ColumnLines.Where(x=>x.ColumnNum==lineNum).Select(x=>x.Column.Name).FirstOrDefault()" class="setFull font-weight-bold">
+                        </td>
+                        @foreach (var columnLine in @Model.ColumnLines.Where(x => x.LineNum == lineNum).OrderBy(x => x.Column.Row))
+                        {
+                            string disabled = "";
+
+                            if (columnLine.Column.Row <= lineNum)
+                                disabled = "disabled";
+
+                            <td column="@columnLine.Column.Row" line="@columnLine.Line.Row">
+                                <input type="text" @disabled value="@columnLine.Value" class="setFull">
+                            </td>
+                        }
+                    </tr>
                 }
-            </tr>
-        }
 
+            </tbody>
+        </table>
+    </div>
+    <div class="col-1">
+        <table class="table">
+            <thead id="thead_line_sum">
+                <tr class="">
+                    <th>
+                        <input type="text" disabled value="D" class="setFull font-weight-bold">
+                    </th>
+                </tr>
+            </thead>
 
-    </tbody>
-</table>
+            <tbody id="tbody_sum">
+                @foreach (var lineNum in @Model.ColumnLines.GroupBy(x => x.LineNum).Select(x => x.Key).ToList())
+                {
+                    <tr class="tr_tbody_sum">
+                        <td sumLine=@lineNum>
+                            <input type="text" disabled value="@Model.LineSums.Where(x=>x.LineNum==lineNum).Select(x=>x.TotalSum).FirstOrDefault()" class="setFull">
+                        </td>
+                    </tr>
+                }
 
+            </tbody>
+        </table>
+
+    </div>
+    <div class="col-1">
+        <table class="table">
+            <thead id="thead_line_w">
+                <tr class="">
+                    <th>
+                        <input type="text" disabled value="W" class="setFull font-weight-bold">
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody id="tbody_w">
+                @foreach (var lineNum in @Model.ColumnLines.GroupBy(x => x.LineNum).Select(x => x.Key).ToList())
+                {
+                    <tr class="tr_tbody_w">
+                        <td wLine="@lineNum">
+                            <input type="text" disabled value="@Model.WLines.Where(x=>x.LineNum==lineNum).Select(x=>x.Value).FirstOrDefault()" class="setFull">
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<div class="col-2">
+</div>
 <script>
     let btnAdd = document.getElementById("btn_add");
     let t_head = document.getElementById("thead");
     let t_body = document.getElementById("tbody");
     let tr_tbody = document.getElementsByClassName("tr_tbody");
     let tr_head = document.getElementsByClassName("tr_head");
-    let maxColumn = @Model.GroupBy(x => x.ColumnId).Select(x => x.Key).LastOrDefault();
-    let maxLine = @Model.GroupBy(x => x.LineId).Select(x => x.Key).LastOrDefault();
+
+    let tbody_sum = document.getElementById("tbody_sum");
+    let tr_tbody_sum = document.getElementsByClassName("tr_tbody_sum");
+
+    let tbody_w = document.getElementById("tbody_w");
+    let tr_tbody_w = document.getElementsByClassName("tr_tbody_w");
+
+    let maxColumn = @Model.ColumnLines.GroupBy(x => x.ColumnId).Select(x => x.Key).LastOrDefault();
+    let maxLine = @Model.ColumnLines.GroupBy(x => x.LineId).Select(x => x.Key).LastOrDefault();
 
 
+    setTimeout(lineNumChanged(), 2000)
+    setTimeout(addLineName(), 2000);
 
 
-    btnAdd.addEventListener("click", function() {
+    btnAdd.addEventListener("click", function () {
+        createTable()
+        addLineName();
+        lineNumChanged();
+        insertData(maxColumn)
+        t_body.children[maxColumn - 1].firstElementChild.firstChild.value = t_head.firstElementChild.children[maxColumn].firstElementChild.value
+    });
 
-        maxColumn++;
-        maxLine++;
-        createTh();
-        createTBodyTr();
-
-        for (let f of t_body.lastElementChild.children) {
-            f.firstElementChild.setAttribute("disabled", "");
-
-        }
-
-        t_body.lastElementChild.lastElementChild.firstElementChild.value = 1;
-
+    function lineNumChanged() {
         let columnThis = 0;
         let lineThis = 0
+        let val=0;
+        for (let tr of tr_tbody) {
+            for (let td of tr.children) {
+                td.firstElementChild.addEventListener("keyup", function () {
 
-        for (let f of tr_tbody) {
-            for (let x of f.children) {
-                x.addEventListener("keyup", function() {
-                    columnThis = x.getAttribute("column");
-                    lineThis = x.getAttribute("line");
-                    let column_name = "";
-
-                    for (let f of tr_head[0].children) {
-                        if (f.getAttribute("th_row") == columnThis) {
-                            column_name=f.firstElementChild.value
-                        }
-                    }
-
-
-                    addDb(columnThis, lineThis, x.firstElementChild.value, column_name);
-
-                    for (let l of tr_tbody) {
-                        for (let i of l.children) {
-                            if (i.getAttribute("line") == columnThis && i.getAttribute("column") == lineThis) {
-                                i.firstElementChild.value = 1 / x.firstElementChild.value
-                            }
-                        }
-                    }
+                    columnThis = td.getAttribute("column");
+                    lineThis = td.getAttribute("line");
+                    let column_name = getColumnName(columnThis);
+                    // console.log("column:" + columnThis + "  line:" + lineThis + "   value:" + td.firstElementChild.value + "   column_name:" + column_name)
+                    calcLineValue(td, columnThis, lineThis);
+                    val = td.firstElementChild.value;
+                    UpdateData(columnThis,lineThis,val);
+                    //addDb(columnThis, lineThis, x.firstElementChild.value, column_name);
 
                 });
             }
         }
 
+    }
 
+    function calcLineValue(td, columnThis, lineThis) {
+        let totalLineSum = 0;
+        let val = 0;
+        for (let l of tr_tbody) {
+            for (let i of l.children) {
+
+                if (i.getAttribute("line") == columnThis && i.getAttribute("column") == lineThis) {
+                    i.firstElementChild.value = 1 / td.firstElementChild.value;
+                }
+
+                if (i.getAttribute("line") == lineThis) {
+                    totalLineSum += Number(i.firstElementChild.value);
+                }
+            }
+        }
+
+
+        console.log("gfgfgg:" + totalLineSum)
+        calcLineSum(lineThis, totalLineSum);
+
+        calcWLine();
+    }
+
+    function calcWLine(totalLineSum) {
+        for (let line of tr_tbody_w) {
+            let wLine = line.firstElementChild.getAttribute("wLine");
+            let totalLineSum = getTotalLineSum();
+            let lineSum = getLineSumByLineNum(wLine);
+
+            line.firstElementChild.firstElementChild.value = Number(lineSum) / Number(totalLineSum);
+        }
+    }
+
+
+    function getTotalLineSum() {
+        let total = 0;
+        for (let line of tr_tbody_sum) {
+            total += Number(line.firstElementChild.firstElementChild.value);
+        }
+        return total;
+    }
+
+    function getLineSumByLineNum(lineNum) {
+        let val = 0;
+        for (let line of tr_tbody_sum) {
+            if (line.firstElementChild.getAttribute("sumLine") == lineNum) {
+                val = line.firstElementChild.firstElementChild.value;
+            }
+        }
+
+        return val;
+    }
+
+    function calcLineSum(lineNum, val) {
+        for (let line of tr_tbody_sum) {
+            if (line.firstElementChild.getAttribute("sumLine") == lineNum) {
+                console.log(line.firstElementChild)
+                line.firstElementChild.firstElementChild.value = Number(val);
+            }
+        }
+    }
+
+    function getColumnName(columnThis) {
+        let colName = "";
+        for (let n of tr_head[0].children) {
+            if (n.getAttribute("th_row") == columnThis) {
+                colName = n.firstElementChild.value
+            }
+        }
+        return colName;
+    }
+
+    ///////-=---------------------------==================----------------------==============-
+
+
+    function createTable() {
+
+        maxColumn++;
+        maxLine++;
+        createTh();
+        createTBodyTr();
+        createTrSum();
+        createTrW();
+
+        for (let f of t_body.lastElementChild.children) {
+            if (maxColumn > 1 && maxLine > 1)
+                f.firstElementChild.setAttribute("disabled", "");
+        }
+
+        t_body.lastElementChild.lastElementChild.firstElementChild.value = 1;
 
         for (let f of t_body.children) {
             f.firstElementChild.firstElementChild.setAttribute("disabled", "")
         }
+    }
 
+
+    function addLineName() {
         for (let f = 0; f < t_head.firstElementChild.children.length; f++) {
-            //t_head.lastElementChild.children[f].firstElementChild.setAttribute("disabled", "")
-            t_head.firstElementChild.children[f].addEventListener("keyup", function() {
+            t_head.firstElementChild.children[f].addEventListener("keyup", function () {
+                let colName = t_head.firstElementChild.children[f].firstElementChild.value;
+                let colNum = t_head.firstElementChild.children[f].getAttribute("th_row");
+                t_body.children[f - 1].firstElementChild.firstElementChild.value = colName;
 
-                t_body.children[f - 1].firstElementChild.firstChild.value = t_head.firstElementChild.children[f].firstElementChild.value
-
-            })
+                updateColumnName(colNum, colName);
+            });
         }
-    });
+    }
+
+
+
+    //---------W line -------------------
+
+
+    function createTrW() {
+        let inputW = document.createElement("input");
+        inputW.classList.add("setFull");
+        inputW.setAttribute("disabled", "")
+        inputW.value = 1;
+
+        let tdW = document.createElement("td");
+        tdW.setAttribute("WLine", maxLine)
+        tdW.appendChild(inputW);
+
+        let trW = document.createElement("tr");
+        trW.appendChild(tdW);
+        trW.classList.add("tr_tbody_w");
+
+        tbody_w.appendChild(trW);
+    }
+
+    //---------line Sum -------------------
+
+    function createTrSum() {
+        let inputSum = document.createElement("input");
+        inputSum.classList.add("setFull");
+        inputSum.setAttribute("disabled", "")
+        inputSum.value = 1;
+
+        let tdSum = document.createElement("td");
+        tdSum.setAttribute("sumLine", maxLine)
+        tdSum.appendChild(inputSum);
+
+        let trSum = document.createElement("tr");
+        trSum.appendChild(tdSum);
+        trSum.classList.add("tr_tbody_sum");
+
+        tbody_sum.appendChild(trSum);
+    }
+
+
+    //base line--------------------
 
     function createTBodyTr() {
         let tBody_tr = document.createElement("tr");
@@ -129,11 +319,14 @@
         t_body.appendChild(tBody_tr);
 
     }
+
     function createTd(column, line) {
         let td_input = document.createElement("input");
+        td_input.value = 0;
         td_input.classList.add("setFull")
 
         let td = document.createElement("td");
+
         if (column > 0 && line > 0) {
             td.setAttribute("column", column);
             td.setAttribute("line", line);
@@ -145,6 +338,7 @@
 
     function createTh() {
         let th_input = document.createElement("input");
+        th_input.value = "Z";
         th_input.classList.add("setFull")
 
         let th = document.createElement("th");
@@ -164,18 +358,45 @@
     }
 
 
-    function addDb(column, line, val, column_name) {
+    function UpdateData(column, line, val) {
         $.ajax({
-            url: "/Calculator/Insert",
+            url: "/Calculator/UpdateData",
             method: "POST",
-            data: { columnNo: column, lineNo: line, val: val, columnName: column_name },
-            success: function(res) {
+            data: { columnNo: column, lineNo: line, val: val },
+            success: function (res) {
                 console.log(res.response);
             },
-            error: function(res) {
+            error: function (res) {
                 console.log(res.response);
             }
         });
     }
 
+    function updateColumnName(columnNum, columnName) {
+        $.ajax({
+            url: "/Calculator/UpdateColumnName",
+            method: "POST",
+            data: { columnNum: columnNum, columnName: columnName },
+            success: function (res) {
+                console.log(res.response);
+            },
+            error: function (res) {
+                console.log(res.response);
+            }
+        });
+    }
+
+    function insertData(columnNum) {
+        $.ajax({
+            url: "/Calculator/InsertData",
+            method: "POST",
+            data: { columnNum: columnNum },
+            success: function (res) {
+                console.log(res.response);
+            },
+            error: function (res) {
+                console.log(res.response);
+            }
+        });
+    }
 </script>

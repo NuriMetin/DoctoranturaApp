@@ -28,14 +28,45 @@ namespace Doctorantura.App.Controllers
             return View(calculateVm);
         }
 
-        public async Task<IActionResult> Insert(int columnNo, int lineNo, double val, string columnName)
+        public async Task<IActionResult> UpdateColumnName(int columnNum,string columnName)
         {
             try
             {
-                if(columnNo != 0 && lineNo!=0 && val!=0 && !String.IsNullOrEmpty(columnName))
+                await _calculateManager.UpdateColumnName(columnNum, columnName);
+            }
+
+            catch (System.Exception exp)
+            {
+                return Json(new { response = exp.Message });
+            }
+
+            return Json(new { response = "success" });
+        }
+
+
+        public async Task<IActionResult> InsertData(int columnNum)
+        {
+            try
+            {
+                await _calculateManager.CreateAsync(columnNum);
+            }
+
+            catch (System.Exception exp)
+            {
+                return Json(new { response = exp.Message });
+            }
+
+            return Json(new { response = "success" });
+        }
+
+        public async Task<IActionResult> UpdateData(int columnNo, int lineNo, double val)
+        {
+            try
+            {
+                if(columnNo != 0 && lineNo!=0 && val!=0)
                 {
-                    await _calculateManager.InsertAsync(columnNo, lineNo, val, columnName);
-                    await _calculateManager.InsertAsync(lineNo, columnNo, 1 / val, columnName);
+                    await _calculateManager.UpdateAsync(columnNo, lineNo, val);
+                    await _calculateManager.UpdateAsync(lineNo, columnNo, 1 / val);
                 }
             }
 

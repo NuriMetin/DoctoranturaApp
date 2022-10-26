@@ -11,5 +11,8 @@
 
         public int LineId { get; set; }
         public virtual Line Line { get; set; }
+
+        public int ColumnNum { get; set; }
+        public int LineNum { get; set; }
     }
 }
