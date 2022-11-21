@@ -12,7 +12,7 @@
 <input id="btn_add" type="button" class="col-12 btn btn-primary d-block mr-5" value="Sütun əlavə et">
 
 <div class="row">
-    <div class="col-8">
+    <div class="col-7">
         <table class="table">
             <thead id="thead">
                 <tr class="tr_head">
@@ -155,6 +155,30 @@
             </tbody>
         </table>
     </div>
+    <div class="col-1">
+        <table class="table">
+            <thead id="thead_line_x">
+                <tr class="">
+                    <th>
+                        <input type="text" disabled value="X" class="setFull font-weight-bold">
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody id="tbody_x">
+                @foreach (var lineNum in @Model.ColumnLines.GroupBy(x => x.LineNum).Select(x => x.Key).ToList())
+                {
+                    <tr class="tr_tbody_x">
+                        <td xLine="@lineNum">
+                            <input type="text" disabled value=@decimal.Round(Convert.ToDecimal(Model.XLines.Where(x=>x.LineNum==lineNum).Select(x=>x.Value).FirstOrDefault()),4) class="setFull">
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+    </div>
 </div>
 
 
@@ -181,6 +205,8 @@
     let maxColumn = @Model.ColumnLines.GroupBy(x => x.ColumnNum).Select(x => x.Key).LastOrDefault();
     let maxLine = @Model.ColumnLines.GroupBy(x => x.LineId).Select(x => x.Key).LastOrDefault();
 
+    let tbody_x = document.getElementById("tbody_x");
+    let tr_tbody_x = document.getElementsByClassName("tr_tbody_x");
 
     //setTimeout(lineNumChanged(), 2000)
     setTimeout(addLineName(), 2000);
@@ -218,6 +244,7 @@
         createTrW();
         createTrAlf();
         createTrQam();
+        createTrX();
         createDeleteRow();
         for (let f of t_body.lastElementChild.children) {
             if (maxColumn > 1 && maxLine > 1)
@@ -326,6 +353,26 @@
         tbody_sum.appendChild(trSum);
     }
 
+
+    //---------X line -------------------
+
+
+    function createTrX() {
+        let inputX = document.createElement("input");
+        inputX.classList.add("setFull");
+        inputX.setAttribute("disabled", "")
+        inputX.value = 1;
+
+        let tdX = document.createElement("td");
+        tdX.setAttribute("xLine", maxLine)
+        tdX.appendChild(inputX);
+
+        let trX = document.createElement("tr");
+        trX.appendChild(tdX);
+        trX.classList.add("tr_tbody_x");
+
+        tbody_x.appendChild(trX);
+    }
 
     //base line--------------------
 

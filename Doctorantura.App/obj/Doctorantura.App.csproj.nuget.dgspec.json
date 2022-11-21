@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Metin\\Projects\\DoctoranturaApp\\Doctorantura.App\\Doctorantura.App.csproj": {}
+    "D:\\OwnProjects\\DoctoranturaApp\\Doctorantura.App\\Doctorantura.App.csproj": {}
   },
   "projects": {
-    "D:\\Metin\\Projects\\DoctoranturaApp\\Doctorantura.App\\Doctorantura.App.csproj": {
+    "D:\\OwnProjects\\DoctoranturaApp\\Doctorantura.App\\Doctorantura.App.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Metin\\Projects\\DoctoranturaApp\\Doctorantura.App\\Doctorantura.App.csproj",
+        "projectUniqueName": "D:\\OwnProjects\\DoctoranturaApp\\Doctorantura.App\\Doctorantura.App.csproj",
         "projectName": "Doctorantura.App",
-        "projectPath": "D:\\Metin\\Projects\\DoctoranturaApp\\Doctorantura.App\\Doctorantura.App.csproj",
-        "packagesPath": "C:\\Users\\Hewlett-Packard\\.nuget\\packages\\",
-        "outputPath": "D:\\Metin\\Projects\\DoctoranturaApp\\Doctorantura.App\\obj\\",
+        "projectPath": "D:\\OwnProjects\\DoctoranturaApp\\Doctorantura.App\\Doctorantura.App.csproj",
+        "packagesPath": "C:\\Users\\matinnu\\.nuget\\packages\\",
+        "outputPath": "D:\\OwnProjects\\DoctoranturaApp\\Doctorantura.App\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Hewlett-Packard\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\matinnu\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],

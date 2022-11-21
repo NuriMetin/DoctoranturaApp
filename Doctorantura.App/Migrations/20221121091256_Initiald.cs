@@ -2,7 +2,7 @@
 
 namespace Doctorantura.App.Migrations
 {
-    public partial class initial : Migration
+    public partial class Initiald : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -32,6 +32,20 @@ namespace Doctorantura.App.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Columns", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "XLines",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LineNum = table.Column<int>(nullable: false),
+                    Value = table.Column<double>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_XLines", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -137,6 +151,9 @@ namespace Doctorantura.App.Migrations
 
             migrationBuilder.DropTable(
                 name: "ColumnsLines");
+
+            migrationBuilder.DropTable(
+                name: "XLines");
 
             migrationBuilder.DropTable(
                 name: "QamLines");

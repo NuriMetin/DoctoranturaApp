@@ -12,5 +12,6 @@ namespace Doctorantura.App.ViewModels
         public List<WLine> WLines { get; set; }
         public List<AlfLine> AlfLines { get; set; }
         public List<QamLine> QamLines { get; set; }
+        public List<XLine> XLines { get; set; }
     }
 }

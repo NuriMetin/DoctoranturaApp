@@ -157,6 +157,24 @@ namespace Doctorantura.App.Migrations
                     b.ToTable("WLines");
                 });
 
+            modelBuilder.Entity("Doctorantura.App.Models.XLine", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("LineNum")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Value")
+                        .HasColumnType("float");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("XLines");
+                });
+
             modelBuilder.Entity("Doctorantura.App.Models.ColumnLine", b =>
                 {
                     b.HasOne("Doctorantura.App.Models.Column", "Column")

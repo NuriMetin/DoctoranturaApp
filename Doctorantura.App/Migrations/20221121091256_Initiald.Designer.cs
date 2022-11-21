@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Doctorantura.App.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221026071113_initial")]
-    partial class initial
+    [Migration("20221121091256_Initiald")]
+    partial class Initiald
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -157,6 +157,24 @@ namespace Doctorantura.App.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("WLines");
+                });
+
+            modelBuilder.Entity("Doctorantura.App.Models.XLine", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("LineNum")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Value")
+                        .HasColumnType("float");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("XLines");
                 });
 
             modelBuilder.Entity("Doctorantura.App.Models.ColumnLine", b =>

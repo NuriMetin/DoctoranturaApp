@@ -14,6 +14,7 @@ namespace Doctorantura.App.Context
         public DbSet<WLine> WLines { get; set; }
         public DbSet<AlfLine> AlfLines { get; set; }
         public DbSet<QamLine> QamLines { get; set; }
+        public DbSet<XLine> XLines { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

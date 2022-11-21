@@ -38,6 +38,8 @@ namespace Doctorantura.App.Services
 
             calculateVM.QamLines = await _appDbContext.QamLines.ToListAsync();
 
+            calculateVM.XLines = await _appDbContext.XLines.ToListAsync();
+
             return calculateVM;
         }
 
@@ -67,6 +69,8 @@ namespace Doctorantura.App.Services
             await UpdateWLineAsync();
 
             await UpdateQamLineAsync(columnNum);
+
+            await UpdateXLineAsync();
         }
 
         public async Task AddLineAsync(int columnNum)
@@ -199,6 +203,8 @@ namespace Doctorantura.App.Services
 
             await UpdateWLineAsync();
             await UpdateQamLineAsync(lineNo);
+
+            await UpdateXLineAsync();
         }
 
         private async Task UpdateColumnDataAsync(Column column, int columnNo, int lineId, int lineNo, double val)
@@ -270,7 +276,7 @@ namespace Doctorantura.App.Services
                     LineNum = lineNo,
                     TotalSum = sum
                 };
-                await _appDbContext.AddAsync(lineSum);
+                await _appDbContext.LinesSum.AddAsync(lineSum);
             }
 
             else
@@ -300,7 +306,7 @@ namespace Doctorantura.App.Services
                         Value = lineSum.TotalSum / total
                     };
 
-                    await _appDbContext.AddAsync(wLine);
+                    await _appDbContext.WLines.AddAsync(wLine);
                 }
 
                 else
@@ -311,6 +317,37 @@ namespace Doctorantura.App.Services
                 await _appDbContext.SaveChangesAsync();
 
                 await UpdateAlfLineAsync(wLine);
+            }
+        }
+
+        private async Task UpdateXLineAsync()
+        {
+            var lines = await _appDbContext.Lines.Select(x=>x.Row).ToListAsync();
+
+            foreach (var lineNo in lines)
+            {
+                var qamLine = await _appDbContext.QamLines.Where(x => x.LineNum == lineNo).FirstOrDefaultAsync();
+                var wLine = await _appDbContext.WLines.Where(x => x.LineNum == lineNo).FirstOrDefaultAsync();
+
+                XLine xLine = await _appDbContext.XLines.FirstOrDefaultAsync(x => x.LineNum == lineNo);
+
+                if (xLine == null || xLine == default)
+                {
+                    xLine = new XLine
+                    {
+                        LineNum = lineNo,
+                        Value = qamLine.Value / wLine.Value
+                    };
+
+                    await _appDbContext.XLines.AddAsync(xLine);
+                }
+
+                else
+                {
+                    xLine.LineNum = lineNo;
+                    xLine.Value = qamLine.Value / wLine.Value;
+                }
+                await _appDbContext.SaveChangesAsync();
             }
         }
 
@@ -375,50 +412,44 @@ namespace Doctorantura.App.Services
 
         public async Task DeleteByColumnNoAsync(int columnNo)
         {
-            //await DeleteColumnLinesByColumnNo(columnNo);
+            await DeleteColumnLinesByColumnNo(columnNo);
             await DeleteColumnByRow(columnNo);
-            //await DeleteLineByRow(columnNo);
+            await DeleteLineByRow(columnNo);
 
-            //await DeleteLineSumByLineNo(columnNo);
+            await DeleteLineSumByLineNo(columnNo);
 
-            //await DeleteWLineByLineNo(columnNo);
+            await DeleteAlfLineByLineNo(columnNo);
+            await DeleteWLineByLineNo(columnNo);
 
-            //await UpdateWLineAsync();
+            await DeleteQamLineByLineNo(columnNo);
 
-            //await DeleteQamLineByLineNo(columnNo);
-
+            await DeleteXLineByLineNo(columnNo);
         }
 
         private async Task DeleteColumnByRow(int row)
         {
-            var columnForDelete = await _appDbContext.Columns.Where(x => x.Row == row).FirstOrDefaultAsync();
-            _appDbContext.Columns.Remove(columnForDelete);
-
             var columns = await _appDbContext.Columns.Where(x => x.Row >= row).OrderByDescending(x => x.Row).ToListAsync();
-            int ff = columns.Where(x => x.Row > row).Count();
+            _appDbContext.Columns.Remove(columns.Where(x => x.Row == row).FirstOrDefault());
 
-
-            for (int i =1 ; i == ff; i++)
+            for (int i = 0; i < columns.Where(x => x.Row >= row).Count() - 1; i++)
             {
-                columns[i].Name = columns[i - 1].Name;
-                columns[i].Row = columns[i - 1].Row;
+                columns[i].Row = columns[i + 1].Row;
+                columns[i].Name = columns[i + 1].Name;
             }
-
 
             await _appDbContext.SaveChangesAsync();
         }
 
         private async Task DeleteLineByRow(int row)
         {
-            var lines = await _appDbContext.Lines.Where(x => x.Row >= row).ToListAsync();
+            var lines = await _appDbContext.Lines.Where(x => x.Row >= row).OrderByDescending(x => x.Row).ToListAsync();
+            _appDbContext.Lines.Remove(lines.Where(x => x.Row == row).FirstOrDefault());
 
-            for (int i = 1; i <= lines.Where(x => x.Row > row).Count(); i++)
+            for (int i = 0; i < lines.Where(x => x.Row >= row).Count() - 1; i++)
             {
-                lines[i].Name = lines[i - 1].Name;
-                lines[i].Row = lines[i - 1].Row;
+                lines[i].Row = lines[i + 1].Row;
+                lines[i].Name = lines[i + 1].Name;
             }
-
-            _appDbContext.Lines.RemoveRange(lines.Where(x => x.Row == row).FirstOrDefault());
 
             await _appDbContext.SaveChangesAsync();
         }
@@ -453,14 +484,15 @@ namespace Doctorantura.App.Services
 
         private async Task DeleteLineSumByLineNo(int lineNo)
         {
-            var linesSum = await _appDbContext.LinesSum.Where(x => x.LineNum >= lineNo).ToListAsync();
+            var linesSum = await _appDbContext.LinesSum.Where(x => x.LineNum >= lineNo).OrderByDescending(x => x.LineNum).ToListAsync();
 
-            for (int i = 1; i <= linesSum.Where(x => x.LineNum > lineNo).Count(); i++)
+            _appDbContext.LinesSum.Remove(linesSum.Where(x => x.LineNum == lineNo).FirstOrDefault());
+
+            for (int i = 0; i < linesSum.Where(x => x.LineNum >= lineNo).Count() - 1; i++)
             {
-                linesSum[i].LineNum = linesSum[i - 1].LineNum;
+                linesSum[i].LineNum = linesSum[i + 1].LineNum;
             }
 
-            _appDbContext.LinesSum.RemoveRange(linesSum.Where(x => x.LineNum == lineNo).FirstOrDefault());
             await _appDbContext.SaveChangesAsync();
 
 
@@ -474,34 +506,69 @@ namespace Doctorantura.App.Services
 
         private async Task DeleteWLineByLineNo(int lineNo)
         {
-            var wLines = await _appDbContext.WLines.Where(x => x.LineNum >= lineNo).ToListAsync();
+            var wLines = await _appDbContext.WLines.Where(x => x.LineNum >= lineNo).OrderByDescending(x => x.LineNum).ToListAsync();
 
-            for (int i = 1; i <= wLines.Where(x => x.LineNum > lineNo).Count(); i++)
+            _appDbContext.WLines.Remove(wLines.Where(x => x.LineNum == lineNo).FirstOrDefault());
+
+            for (int i = 0; i < wLines.Where(x => x.LineNum >= lineNo).Count() - 1; i++)
             {
-                wLines[i].LineNum = wLines[i - 1].LineNum;
+                wLines[i].LineNum = wLines[i + 1].LineNum;
             }
 
-            _appDbContext.WLines.RemoveRange(wLines.Where(x => x.LineNum == lineNo).FirstOrDefault());
+            await _appDbContext.SaveChangesAsync();
+
+            await UpdateWLineAsync();
+        }
+
+        private async Task DeleteAlfLineByLineNo(int lineNo)
+        {
+            var alfLines = await _appDbContext.AlfLines.Where(x => x.LineNum >= lineNo).OrderByDescending(x => x.LineNum).ToListAsync();
+
+            _appDbContext.AlfLines.Remove(alfLines.Where(x => x.LineNum == lineNo).FirstOrDefault());
+
+            for (int i = 0; i < alfLines.Where(x => x.LineNum >= lineNo).Count() - 1; i++)
+            {
+                alfLines[i].LineNum = alfLines[i + 1].LineNum;
+            }
+
             await _appDbContext.SaveChangesAsync();
         }
 
         private async Task DeleteQamLineByLineNo(int lineNo)
         {
-            var qamLines = await _appDbContext.QamLines.Where(x => x.LineNum >= lineNo).ToListAsync();
-            var lines = await _appDbContext.QamLines.Select(x => x.LineNum).ToListAsync();
+            var qamLines = await _appDbContext.QamLines.Where(x => x.LineNum >= lineNo).OrderByDescending(x => x.LineNum).ToListAsync();
 
-            for (int i = 1; i <= qamLines.Where(x => x.LineNum > lineNo).Count(); i++)
+            _appDbContext.QamLines.Remove(qamLines.Where(x => x.LineNum == lineNo).FirstOrDefault());
+
+            for (int i = 0; i < qamLines.Where(x => x.LineNum >= lineNo).Count() - 1; i++)
             {
-                qamLines[i].LineNum = qamLines[i - 1].LineNum;
+                qamLines[i].LineNum = qamLines[i + 1].LineNum;
             }
 
-            _appDbContext.QamLines.RemoveRange(qamLines.Where(x => x.LineNum == lineNo).FirstOrDefault());
             await _appDbContext.SaveChangesAsync();
+
+            var lines = await _appDbContext.QamLines.Select(x => x.LineNum).ToListAsync();
 
             foreach (var line in lines)
             {
                 await UpdateQamLineAsync(line);
             }
+        }
+
+        private async Task DeleteXLineByLineNo(int lineNo)
+        {
+            var xLines = await _appDbContext.XLines.Where(x => x.LineNum >= lineNo).OrderByDescending(x => x.LineNum).ToListAsync();
+
+            _appDbContext.XLines.Remove(xLines.Where(x => x.LineNum == lineNo).FirstOrDefault());
+
+            for (int i = 0; i < xLines.Where(x => x.LineNum >= lineNo).Count() - 1; i++)
+            {
+                xLines[i].LineNum = xLines[i + 1].LineNum;
+            }
+
+            await _appDbContext.SaveChangesAsync();
+
+            await UpdateXLineAsync();
         }
     }
 }
