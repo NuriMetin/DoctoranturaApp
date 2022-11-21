@@ -2,10 +2,24 @@
 
 namespace Doctorantura.App.Migrations
 {
-    public partial class init : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AlfLines",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LineNum = table.Column<int>(nullable: false),
+                    Value = table.Column<double>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AlfLines", x => x.ID);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Columns",
                 columns: table => new
@@ -18,6 +32,20 @@ namespace Doctorantura.App.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Columns", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "QamLines",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LineNum = table.Column<int>(nullable: false),
+                    Value = table.Column<double>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QamLines", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -41,7 +69,7 @@ namespace Doctorantura.App.Migrations
                     ID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     LineNum = table.Column<int>(nullable: false),
-                    TotalSum = table.Column<decimal>(nullable: false)
+                    TotalSum = table.Column<double>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -55,7 +83,7 @@ namespace Doctorantura.App.Migrations
                     ID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     LineNum = table.Column<int>(nullable: false),
-                    Value = table.Column<decimal>(nullable: false)
+                    Value = table.Column<double>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -105,7 +133,13 @@ namespace Doctorantura.App.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AlfLines");
+
+            migrationBuilder.DropTable(
                 name: "ColumnsLines");
+
+            migrationBuilder.DropTable(
+                name: "QamLines");
 
             migrationBuilder.DropTable(
                 name: "LinesSum");

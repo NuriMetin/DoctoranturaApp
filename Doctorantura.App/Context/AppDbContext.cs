@@ -12,6 +12,9 @@ namespace Doctorantura.App.Context
         public DbSet<ColumnLine> ColumnsLines { get; set; }
         public DbSet<LineSum> LinesSum { get; set; }
         public DbSet<WLine> WLines { get; set; }
+        public DbSet<AlfLine> AlfLines { get; set; }
+        public DbSet<QamLine> QamLines { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

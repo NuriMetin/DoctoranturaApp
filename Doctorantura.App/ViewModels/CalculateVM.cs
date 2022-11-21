@@ -10,5 +10,7 @@ namespace Doctorantura.App.ViewModels
         public List<ColumnLine> ColumnLines { get; set; }
         public List<LineSum> LineSums { get; set; }
         public List<WLine> WLines { get; set; }
+        public List<AlfLine> AlfLines { get; set; }
+        public List<QamLine> QamLines { get; set; }
     }
 }

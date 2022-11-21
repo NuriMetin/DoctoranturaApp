@@ -12,7 +12,7 @@
 <input id="btn_add" type="button" class="col-12 btn btn-primary d-block mr-5" value="Sütun əlavə et">
 
 <div class="row">
-    <div class="col-10">
+    <div class="col-8">
         <table class="table">
             <thead id="thead">
                 <tr class="tr_head">
@@ -20,7 +20,7 @@
                     @foreach (var columnNum in @Model.ColumnLines.GroupBy(x => x.ColumnNum).Select(x => x.Key).ToList())
                     {
                         <th th_row="@Model.ColumnLines.Where(x=>x.ColumnNum==columnNum).Select(x=>x.Column.Row).FirstOrDefault()" scope="col">
-                            <input type="text" value="@Model.ColumnLines.Where(x=>x.ColumnId==columnNum).Select(x=>x.Column.Name).FirstOrDefault()" class="setFull font-weight-bold">
+                            <input type="text" value="@Model.ColumnLines.Where(x=>x.ColumnNum==columnNum).Select(x=>x.Column.Name).FirstOrDefault()" class="setFull font-weight-bold">
                         </th>
                     }
                 </tr>
@@ -41,12 +41,23 @@
                                 disabled = "disabled";
 
                             <td column="@columnLine.Column.Row" line="@columnLine.Line.Row">
-                                <input type="text" @disabled value="@columnLine.Value" class="setFull">
+                                <input type="text" onkeyup="lineNumChanged(this)" @disabled value=@decimal.Round(Convert.ToDecimal(columnLine.Value), 4) class="setFull">
                             </td>
                         }
                     </tr>
                 }
 
+            </tbody>
+            <tbody>
+                 <tr id="tr_delete">
+                    <td scope="col"></td>
+                    @foreach (var columnNum in @Model.ColumnLines.GroupBy(x => x.ColumnNum).Select(x => x.Key).ToList())
+                    {
+                        <td td_delete_row="@columnNum" onclick="deleteData(@columnNum)" scope="col">
+                            <input type="button" value="Sil" class="setFull btn btn-danger">
+                        </td>
+                    }
+                </tr>
             </tbody>
         </table>
     </div>
@@ -65,7 +76,7 @@
                 {
                     <tr class="tr_tbody_sum">
                         <td sumLine=@lineNum>
-                            <input type="text" disabled value="@Model.LineSums.Where(x=>x.LineNum==lineNum).Select(x=>x.TotalSum).FirstOrDefault()" class="setFull">
+                            <input type="text" disabled value=@decimal.Round(Convert.ToDecimal(Model.LineSums.Where(x=>x.LineNum==lineNum).Select(x=>x.TotalSum).FirstOrDefault()),4) class="setFull">
                         </td>
                     </tr>
                 }
@@ -89,7 +100,7 @@
                 {
                     <tr class="tr_tbody_w">
                         <td wLine="@lineNum">
-                            <input type="text" disabled value="@Model.WLines.Where(x=>x.LineNum==lineNum).Select(x=>x.Value).FirstOrDefault()" class="setFull">
+                            <input type="text" disabled value=@decimal.Round(Convert.ToDecimal(Model.WLines.Where(x=>x.LineNum==lineNum).Select(x=>x.Value).FirstOrDefault()),4) class="setFull">
                         </td>
                     </tr>
                 }
@@ -98,16 +109,62 @@
         </table>
 
     </div>
+    <div class="col-1">
+        <table class="table">
+            <thead id="thead_line_alf">
+                <tr class="">
+                    <th>
+                        <input type="text" disabled value="α" class="setFull font-weight-bold">
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody id="tbody_alf">
+                @foreach (var lineNum in @Model.ColumnLines.GroupBy(x => x.LineNum).Select(x => x.Key).ToList())
+                {
+                    <tr class="tr_tbody_alf">
+                        <td alfLine="@lineNum">
+                            <input type="text" disabled value=@decimal.Round(Convert.ToDecimal(Model.AlfLines.Where(x=>x.LineNum==lineNum).Select(x=>x.Value).FirstOrDefault()),4) class="setFull">
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+    <div class="col-1">
+        <table class="table">
+            <thead id="thead_line_qam">
+                <tr class="">
+                    <th>
+                        <input type="text" disabled value="γ" class="setFull font-weight-bold">
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody id="tbody_qam">
+                @foreach (var lineNum in @Model.ColumnLines.GroupBy(x => x.LineNum).Select(x => x.Key).ToList())
+                {
+                    <tr class="tr_tbody_qam">
+                        <td qamLine="@lineNum">
+                            <input type="text" disabled value=@decimal.Round(Convert.ToDecimal(Model.QamLines.Where(x=>x.LineNum==lineNum).Select(x=>x.Value).FirstOrDefault()),4) class="setFull">
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<div class="col-2">
-</div>
+
 <script>
     let btnAdd = document.getElementById("btn_add");
     let t_head = document.getElementById("thead");
     let t_body = document.getElementById("tbody");
     let tr_tbody = document.getElementsByClassName("tr_tbody");
     let tr_head = document.getElementsByClassName("tr_head");
+    let tr_delete = document.getElementById("tr_delete");
 
     let tbody_sum = document.getElementById("tbody_sum");
     let tr_tbody_sum = document.getElementsByClassName("tr_tbody_sum");
@@ -115,115 +172,37 @@
     let tbody_w = document.getElementById("tbody_w");
     let tr_tbody_w = document.getElementsByClassName("tr_tbody_w");
 
-    let maxColumn = @Model.ColumnLines.GroupBy(x => x.ColumnId).Select(x => x.Key).LastOrDefault();
+    let tbody_alf = document.getElementById("tbody_alf");
+    let tr_tbody_alf = document.getElementsByClassName("tr_tbody_alf");
+
+    let tbody_qam = document.getElementById("tbody_qam");
+    let tr_tbody_qam = document.getElementsByClassName("tr_tbody_qam");
+
+    let maxColumn = @Model.ColumnLines.GroupBy(x => x.ColumnNum).Select(x => x.Key).LastOrDefault();
     let maxLine = @Model.ColumnLines.GroupBy(x => x.LineId).Select(x => x.Key).LastOrDefault();
 
 
-    setTimeout(lineNumChanged(), 2000)
+    //setTimeout(lineNumChanged(), 2000)
     setTimeout(addLineName(), 2000);
 
 
     btnAdd.addEventListener("click", function () {
-        createTable()
+        createTable();
         addLineName();
-        lineNumChanged();
+        @*lineNumChanged();*@
         insertData(maxColumn)
         t_body.children[maxColumn - 1].firstElementChild.firstChild.value = t_head.firstElementChild.children[maxColumn].firstElementChild.value
     });
 
-    function lineNumChanged() {
-        let columnThis = 0;
-        let lineThis = 0
-        let val=0;
-        for (let tr of tr_tbody) {
-            for (let td of tr.children) {
-                td.firstElementChild.addEventListener("keyup", function () {
+    function lineNumChanged(arg) {
+        let columnNum = arg.parentElement.getAttribute("column");
+        let lineNum = arg.parentElement.getAttribute("line");
+        let value = arg.value;
 
-                    columnThis = td.getAttribute("column");
-                    lineThis = td.getAttribute("line");
-                    let column_name = getColumnName(columnThis);
-                    // console.log("column:" + columnThis + "  line:" + lineThis + "   value:" + td.firstElementChild.value + "   column_name:" + column_name)
-                    calcLineValue(td, columnThis, lineThis);
-                    val = td.firstElementChild.value;
-                    UpdateData(columnThis,lineThis,val);
-                    //addDb(columnThis, lineThis, x.firstElementChild.value, column_name);
+        @*calcLineValue(arg.parentElement, columnNum, lineNum);*@
 
-                });
-            }
-        }
+        UpdateData(columnNum, lineNum, value);
 
-    }
-
-    function calcLineValue(td, columnThis, lineThis) {
-        let totalLineSum = 0;
-        let val = 0;
-        for (let l of tr_tbody) {
-            for (let i of l.children) {
-
-                if (i.getAttribute("line") == columnThis && i.getAttribute("column") == lineThis) {
-                    i.firstElementChild.value = 1 / td.firstElementChild.value;
-                }
-
-                if (i.getAttribute("line") == lineThis) {
-                    totalLineSum += Number(i.firstElementChild.value);
-                }
-            }
-        }
-
-
-        console.log("gfgfgg:" + totalLineSum)
-        calcLineSum(lineThis, totalLineSum);
-
-        calcWLine();
-    }
-
-    function calcWLine(totalLineSum) {
-        for (let line of tr_tbody_w) {
-            let wLine = line.firstElementChild.getAttribute("wLine");
-            let totalLineSum = getTotalLineSum();
-            let lineSum = getLineSumByLineNum(wLine);
-
-            line.firstElementChild.firstElementChild.value = Number(lineSum) / Number(totalLineSum);
-        }
-    }
-
-
-    function getTotalLineSum() {
-        let total = 0;
-        for (let line of tr_tbody_sum) {
-            total += Number(line.firstElementChild.firstElementChild.value);
-        }
-        return total;
-    }
-
-    function getLineSumByLineNum(lineNum) {
-        let val = 0;
-        for (let line of tr_tbody_sum) {
-            if (line.firstElementChild.getAttribute("sumLine") == lineNum) {
-                val = line.firstElementChild.firstElementChild.value;
-            }
-        }
-
-        return val;
-    }
-
-    function calcLineSum(lineNum, val) {
-        for (let line of tr_tbody_sum) {
-            if (line.firstElementChild.getAttribute("sumLine") == lineNum) {
-                console.log(line.firstElementChild)
-                line.firstElementChild.firstElementChild.value = Number(val);
-            }
-        }
-    }
-
-    function getColumnName(columnThis) {
-        let colName = "";
-        for (let n of tr_head[0].children) {
-            if (n.getAttribute("th_row") == columnThis) {
-                colName = n.firstElementChild.value
-            }
-        }
-        return colName;
     }
 
     ///////-=---------------------------==================----------------------==============-
@@ -233,11 +212,13 @@
 
         maxColumn++;
         maxLine++;
-        createTh();
+        createTh(`K${maxColumn}`);
         createTBodyTr();
         createTrSum();
         createTrW();
-
+        createTrAlf();
+        createTrQam();
+        createDeleteRow();
         for (let f of t_body.lastElementChild.children) {
             if (maxColumn > 1 && maxLine > 1)
                 f.firstElementChild.setAttribute("disabled", "");
@@ -263,6 +244,47 @@
         }
     }
 
+
+    //---------Qamma line -------------------
+
+
+    function createTrQam() {
+        let inputQam = document.createElement("input");
+        inputQam.classList.add("setFull");
+        inputQam.setAttribute("disabled", "")
+        inputQam.value = 1;
+
+        let tdQam = document.createElement("td");
+        tdQam.setAttribute("qamLine", maxLine)
+        tdQam.appendChild(inputQam);
+
+        let trQam = document.createElement("tr");
+        trQam.appendChild(tdQam);
+        trQam.classList.add("tr_tbody_qam");
+
+        tbody_qam.appendChild(trQam);
+    }
+
+
+    //---------Alfa line -------------------
+
+
+    function createTrAlf() {
+        let inputAlf = document.createElement("input");
+        inputAlf.classList.add("setFull");
+        inputAlf.setAttribute("disabled", "")
+        inputAlf.value = 1;
+
+        let tdAlf = document.createElement("td");
+        tdAlf.setAttribute("AlfLine", maxLine)
+        tdAlf.appendChild(inputAlf);
+
+        let trAlf = document.createElement("tr");
+        trAlf.appendChild(tdAlf);
+        trAlf.classList.add("tr_tbody_alf");
+
+        tbody_alf.appendChild(trAlf);
+    }
 
 
     //---------W line -------------------
@@ -336,9 +358,9 @@
         return td;
     }
 
-    function createTh() {
+    function createTh(name) {
         let th_input = document.createElement("input");
-        th_input.value = "Z";
+        th_input.value = name;
         th_input.classList.add("setFull")
 
         let th = document.createElement("th");
@@ -358,13 +380,43 @@
     }
 
 
+    function createDeleteRow(){
+        let del_input = document.createElement("input");
+        del_input.value = "Sil";
+        del_input.classList.add("setFull")
+        del_input.classList.add("btn")
+        del_input.classList.add("btn-danger")
+
+        let td_del = document.createElement("td");
+        td_del.setAttribute("td_delete_row", maxColumn);
+
+        td_del.appendChild(del_input);
+        tr_delete.appendChild(td_del);
+    }
+
     function UpdateData(column, line, val) {
         $.ajax({
             url: "/Calculator/UpdateData",
             method: "POST",
             data: { columnNo: column, lineNo: line, val: val },
             success: function (res) {
+                location.reload();
+            },
+            error: function (res) {
                 console.log(res.response);
+            }
+        });
+    }
+
+    function deleteData(columnNo) {
+       
+        console.log(columnNo);
+        $.ajax({
+            url: "/Calculator/DeleteData",
+            method: "POST",
+            data: { columnNo: columnNo},
+            success: function (res) {
+                location.reload();
             },
             error: function (res) {
                 console.log(res.response);
@@ -392,7 +444,7 @@
             method: "POST",
             data: { columnNum: columnNum },
             success: function (res) {
-                console.log(res.response);
+                location.reload();
             },
             error: function (res) {
                 console.log(res.response);

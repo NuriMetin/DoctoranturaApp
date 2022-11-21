@@ -40,7 +40,7 @@ namespace Doctorantura.App.Controllers
                 return Json(new { response = exp.Message });
             }
 
-            return Json(new { response = "success" });
+            return Json(new { response = "Success" });
         }
 
 
@@ -56,7 +56,8 @@ namespace Doctorantura.App.Controllers
                 return Json(new { response = exp.Message });
             }
 
-            return Json(new { response = "success" });
+            //return RedirectToAction("Calculate", "Calculator");
+            return Json(new { response = "Success" });
         }
 
         public async Task<IActionResult> UpdateData(int columnNo, int lineNo, double val)
@@ -75,7 +76,28 @@ namespace Doctorantura.App.Controllers
                 return Json(new { response = exp.Message });
             }
 
-            return Json(new { response = "success" });
+            //return RedirectToAction("Calculate", "Calculator");
+            return Json(new { response = "Success" });
+        }
+
+        public async Task<IActionResult> DeleteData(int columnNo)
+        {
+            try
+            {
+                if (columnNo != 0)
+                {
+                    await _calculateManager.DeleteByColumnNoAsync(columnNo);
+                   
+                }
+            }
+
+            catch (System.Exception exp)
+            {
+                return Json(new { response = exp.Message });
+            }
+
+            //return RedirectToAction("Calculate", "Calculator");
+            return Json(new { response = "Success" });
         }
     }
 }

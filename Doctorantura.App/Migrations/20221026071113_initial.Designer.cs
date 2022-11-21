@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Doctorantura.App.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221025230222_init")]
-    partial class init
+    [Migration("20221026071113_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,6 +19,24 @@ namespace Doctorantura.App.Migrations
                 .HasAnnotation("ProductVersion", "3.1.29")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("Doctorantura.App.Models.AlfLine", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("LineNum")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Value")
+                        .HasColumnType("float");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("AlfLines");
+                });
 
             modelBuilder.Entity("Doctorantura.App.Models.Column", b =>
                 {
@@ -97,12 +115,30 @@ namespace Doctorantura.App.Migrations
                     b.Property<int>("LineNum")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("TotalSum")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("TotalSum")
+                        .HasColumnType("float");
 
                     b.HasKey("ID");
 
                     b.ToTable("LinesSum");
+                });
+
+            modelBuilder.Entity("Doctorantura.App.Models.QamLine", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("LineNum")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Value")
+                        .HasColumnType("float");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("QamLines");
                 });
 
             modelBuilder.Entity("Doctorantura.App.Models.WLine", b =>
@@ -115,8 +151,8 @@ namespace Doctorantura.App.Migrations
                     b.Property<int>("LineNum")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Value")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Value")
+                        .HasColumnType("float");
 
                     b.HasKey("ID");
 
