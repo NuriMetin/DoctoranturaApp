@@ -49,7 +49,7 @@
 
             </tbody>
             <tbody>
-                 <tr id="tr_delete">
+                <tr id="tr_delete">
                     <td scope="col"></td>
                     @foreach (var columnNum in @Model.ColumnLines.GroupBy(x => x.ColumnNum).Select(x => x.Key).ToList())
                     {
@@ -215,8 +215,8 @@
     btnAdd.addEventListener("click", function () {
         createTable();
         addLineName();
-        @*lineNumChanged();*@
-        insertData(maxColumn)
+    @*lineNumChanged();*@
+            insertData(maxColumn)
         t_body.children[maxColumn - 1].firstElementChild.firstChild.value = t_head.firstElementChild.children[maxColumn].firstElementChild.value
     });
 
@@ -225,10 +225,10 @@
         let lineNum = arg.parentElement.getAttribute("line");
         let value = arg.value;
 
-        @*calcLineValue(arg.parentElement, columnNum, lineNum);*@
-
-        UpdateData(columnNum, lineNum, value);
-
+    @*calcLineValue(arg.parentElement, columnNum, lineNum);*@
+        if (value != null && value != '' && value.length > 0) {
+            UpdateData(columnNum, lineNum, value);
+        }
     }
 
     ///////-=---------------------------==================----------------------==============-
@@ -427,7 +427,7 @@
     }
 
 
-    function createDeleteRow(){
+    function createDeleteRow() {
         let del_input = document.createElement("input");
         del_input.value = "Sil";
         del_input.classList.add("setFull")
@@ -456,12 +456,12 @@
     }
 
     function deleteData(columnNo) {
-       
+
         console.log(columnNo);
         $.ajax({
             url: "/Calculator/DeleteData",
             method: "POST",
-            data: { columnNo: columnNo},
+            data: { columnNo: columnNo },
             success: function (res) {
                 location.reload();
             },
