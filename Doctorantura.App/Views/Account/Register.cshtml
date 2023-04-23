@@ -1,0 +1,74 @@
+﻿@model RegisterVM
+@{
+    ViewData["Title"] = "Register";
+}
+<link href="~/css/account.cssrel=" stylesheet" />
+<div class="register-container pt-5 pb-5">
+    <div class="container-fluid register">
+        <form method="post" asp-action="Register" asp-controller="Account" enctype="multipart/form-data">
+            <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="form-group col-lg-9">
+                        <label class="control-label">Ad</label>
+                        <input class="form-control" style="height:30px !important;" asp-for="Name" />
+                        <span class="text-danger" asp-validation-for="Name"></span>
+                    </div>
+                    <div class="form-group col-lg-9">
+                        <label class="control-label">Soyad</label>
+                        <input class="form-control" style="height:30px !important;" asp-for="Surname" />
+                        <span class="text-danger" asp-validation-for="Surname"></span>
+                    </div>
+                    <div class="form-group col-lg-9">
+                        <label class="control-label">Ata adı</label>
+                        <input class="form-control" style="height:30px !important;" asp-for="FatherName" />
+                        <span class="text-danger" asp-validation-for="FatherName"></span>
+                    </div>
+                    <div class="form-group col-lg-9">
+                        <label class="control-label">Doğum tarixi</label>
+                        <input value="@DateTime.Now.Date" type="date" class="form-control" asp-for="Born" />
+                        <span class="text-danger" asp-validation-for="Born"></span>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="form-group col-lg-12">
+                        <label class="control-label">Doğum tarixi</label>
+                        <select class="form-control" style="height:30px !important;" asp-for="GenderId" asp-items="@(new SelectList(Model.Genders,"ID", "Name"))">
+                            <option value="">--Cinsi seç--</option>
+                        </select>
+                        <span class="text-danger" asp-validation-for="GenderId"></span>
+                    </div>
+                    <div class="form-group col-lg-12">
+                        <label class="control-label">Email</label>
+                        <input type="email" class="form-control" style="height:30px !important;" asp-for="Email" />
+                        <span class="text-danger" asp-validation-for="Email"></span>
+                    </div>
+                    <div class="form-group col-lg-12">
+                        <label class="control-label">Parol</label>
+                        <input type="password" class="form-control" style="height:30px !important;" asp-for="Password" />
+                        <span class="text-danger" asp-validation-for="Password"></span>
+                    </div>
+                    <div class="form-group col-lg-12">
+                        <label class="control-label">Parolu təsdiqlə</label>
+                        <input type="password" class="form-control" style="height:30px !important;" asp-for="ConfirmPassword" />
+                        <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
+                    </div>
+                </div>
+                <div class="col-lg-5 text-right">
+                    <div class="col-lg-7 text-right">
+                        <div id="imgPreview">
+                            <img src="" style=" border:1px solid black; height:200px; width:100%;" id="image">
+                        </div>
+                        <input style="margin-top:5px" ; accept="image/*" asp-for="Photo" type="file" onchange="showImage.call(this)" />
+                        <span class="text-danger red" asp-validation-for="Photo"></span>
+                    </div>
+                </div>
+                <div class="btn-register pt-5 text-center col-lg-12">
+                    <input type="submit" class="btn btn-primary" value="Qeydiyyatdan keç" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="~/js/index.js"></script>

@@ -107,6 +107,7 @@ namespace Doctorantura.App.Services
 
                         await _appDbContext.ColumnsLines.AddAsync(columnData);
                         await _appDbContext.SaveChangesAsync();
+
                     }
 
                     if (lineData == null || lineData == default)
@@ -122,6 +123,7 @@ namespace Doctorantura.App.Services
 
                         await _appDbContext.ColumnsLines.AddAsync(lineData);
                         await _appDbContext.SaveChangesAsync();
+
                     }
                 }
 
@@ -195,6 +197,8 @@ namespace Doctorantura.App.Services
             Column column = await _appDbContext.Columns.Where(x => x.Row == columnNo).FirstOrDefaultAsync();
             Line line = await _appDbContext.Lines.Where(x => x.Row == lineNo).FirstOrDefaultAsync();
 
+            List<int> columnRows = await _appDbContext.Columns.Select(x => x.Row).ToListAsync();
+
             await UpdateColumnDataAsync(column, columnNo, line.ID, lineNo, val);
             await UpdateLineDataAsync(line, columnNo, column.ID, lineNo, val);
 
@@ -202,7 +206,11 @@ namespace Doctorantura.App.Services
             await UpdateLineSumAsync(lineNo);
 
             await UpdateWLineAsync();
-            await UpdateQamLineAsync(lineNo);
+
+            foreach (var columnRow in columnRows)
+            {
+                await UpdateQamLineAsync(columnRow);
+            }
 
             await UpdateXLineAsync();
         }
@@ -423,6 +431,7 @@ namespace Doctorantura.App.Services
 
             await DeleteQamLineByLineNo(columnNo);
 
+
             await DeleteXLineByLineNo(columnNo);
         }
 
@@ -547,12 +556,15 @@ namespace Doctorantura.App.Services
 
             await _appDbContext.SaveChangesAsync();
 
-            var lines = await _appDbContext.QamLines.Select(x => x.LineNum).ToListAsync();
+            List<int> columnRows = await _appDbContext.Columns.Select(x => x.Row).ToListAsync();
 
-            foreach (var line in lines)
+
+            foreach (var line in columnRows)
             {
                 await UpdateQamLineAsync(line);
             }
+
+
         }
 
         private async Task DeleteXLineByLineNo(int lineNo)

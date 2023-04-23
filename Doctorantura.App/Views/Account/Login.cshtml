@@ -1,0 +1,36 @@
+﻿@model LoginVM
+@{
+    ViewData["Title"] = "Login";
+}
+<link href="~/css/account.css" rel="stylesheet" />
+<div class="login-container pt-3 pb-5">
+    <div class="container-fluid col-lg-4">
+        <form method="post" asp-action="Login" asp-controller="Account">
+            <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+            <div class="row">
+                <div class="form-group col-lg-12">
+                    <label class="control-label">Email</label>
+                    <input type="email" class="form-control" style="height:30px !important;" asp-for="Email" />
+                    <span class="text-danger" asp-validation-for="Email"></span>
+                </div>
+                <div class="form-group col-lg-12">
+                    <label class="control-label">Parol</label>
+                    <input type="password" class="form-control" style="height:30px !important;" asp-for="Password" />
+                    <span class="text-danger" asp-validation-for="Password"></span>
+                </div>
+                <div class="form-group col-lg-12">
+                    <input type="checkbox" asp-for="Remember" /> Yadda saxla
+                    <span class="text-danger" asp-validation-for="Remember"></span>
+                </div>
+                <div class="btn-register pt-5 text-center col-lg-12">
+                    <input type="submit" class="btn btn-primary" value="Daxil ol" />
+                </div>
+            </div>
+        </form>
+        <div class="account">
+            <span>Parolu unutdunuz? <a href="#"> Sıfırla</a></span>
+            <span>Hesabınız yoxdur? <a asp-controller="Account" asp-action="Register"> Qeydiyatdan keç</a></span>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>

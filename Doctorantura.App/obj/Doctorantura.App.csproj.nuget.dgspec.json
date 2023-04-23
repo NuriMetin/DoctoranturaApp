@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\OwnProjects\\DoctoranturaApp\\Doctorantura.App\\Doctorantura.App.csproj": {}
+    "D:\\Metin\\Projects\\DoctoranturaApp\\Doctorantura.App\\Doctorantura.App.csproj": {}
   },
   "projects": {
-    "D:\\OwnProjects\\DoctoranturaApp\\Doctorantura.App\\Doctorantura.App.csproj": {
+    "D:\\Metin\\Projects\\DoctoranturaApp\\Doctorantura.App\\Doctorantura.App.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\OwnProjects\\DoctoranturaApp\\Doctorantura.App\\Doctorantura.App.csproj",
+        "projectUniqueName": "D:\\Metin\\Projects\\DoctoranturaApp\\Doctorantura.App\\Doctorantura.App.csproj",
         "projectName": "Doctorantura.App",
-        "projectPath": "D:\\OwnProjects\\DoctoranturaApp\\Doctorantura.App\\Doctorantura.App.csproj",
-        "packagesPath": "C:\\Users\\matinnu\\.nuget\\packages\\",
-        "outputPath": "D:\\OwnProjects\\DoctoranturaApp\\Doctorantura.App\\obj\\",
+        "projectPath": "D:\\Metin\\Projects\\DoctoranturaApp\\Doctorantura.App\\Doctorantura.App.csproj",
+        "packagesPath": "C:\\Users\\Hewlett-Packard\\.nuget\\packages\\",
+        "outputPath": "D:\\Metin\\Projects\\DoctoranturaApp\\Doctorantura.App\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\matinnu\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Hewlett-Packard\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -48,6 +48,10 @@
             "AutoMapper.Extensions.Microsoft.DependencyInjection": {
               "target": "Package",
               "version": "[11.0.0, )"
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[3.1.32, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",

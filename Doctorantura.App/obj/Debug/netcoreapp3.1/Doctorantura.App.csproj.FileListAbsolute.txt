@@ -162,6 +162,9 @@ D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Doctoran
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Doctorantura.App.Views.pdb
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\AutoMapper.dll
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Cryptography.Internal.dll
+D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Razor.Language.dll
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.Bcl.AsyncInterfaces.dll
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.Bcl.HashCode.dll
@@ -183,6 +186,8 @@ D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsof
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Core.dll
+D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Stores.dll
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.dll
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.Abstractions.dll
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Options.dll
@@ -287,6 +292,8 @@ D:\OwnProjects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\staticwe
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\Doctorantura.App.TagHelpers.input.cache
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\Doctorantura.App.TagHelpers.output.cache
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\Doctorantura.App.RazorCoreGenerate.cache
+D:\OwnProjects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\Razor\Views\Account\Login.cshtml.g.cs
+D:\OwnProjects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\Razor\Views\Account\Register.cshtml.g.cs
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\Razor\Views\Calculator\Calculate.cshtml.g.cs
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\Razor\Views\Home\Index.cshtml.g.cs
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\Razor\Views\Home\Privacy.cshtml.g.cs
@@ -302,3 +309,10 @@ D:\OwnProjects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\Doctoran
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\Doctorantura.App.dll
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\Doctorantura.App.pdb
 D:\OwnProjects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\Doctorantura.App.genruntimeconfig.cache
+D:\Metin\Projects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Cryptography.Internal.dll
+D:\Metin\Projects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+D:\Metin\Projects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\Metin\Projects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Core.dll
+D:\Metin\Projects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Stores.dll
+D:\Metin\Projects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\Razor\Views\Account\Login.cshtml.g.cs
+D:\Metin\Projects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\Razor\Views\Account\Register.cshtml.g.cs

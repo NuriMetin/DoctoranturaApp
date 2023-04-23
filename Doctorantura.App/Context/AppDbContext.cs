@@ -1,9 +1,11 @@
 ﻿using Doctorantura.App.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace Doctorantura.App.Context
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<AppUser>
     {
         public AppDbContext(DbContextOptions<AppDbContext> dbContextOptions) : base(dbContextOptions) { }
 
@@ -15,6 +17,7 @@ namespace Doctorantura.App.Context
         public DbSet<AlfLine> AlfLines { get; set; }
         public DbSet<QamLine> QamLines { get; set; }
         public DbSet<XLine> XLines { get; set; }
+        public DbSet<Gender> Genders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
