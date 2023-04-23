@@ -1,0 +1,94 @@
+﻿@model IEnumerable<CalcTaskVM>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<AppUser> _userManager
+
+@{
+    ViewData["Title"] = "TaskList";
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    <button class="btn btn-primary d-block col-12" onclick="showModal()">Yeni məsələ</button>
+}
+
+<table class="table">
+    <thead id="thead">
+        <tr class="tr_head">
+            <th>ID</th>
+            <th>Task Name</th>
+            <th>Username</th>
+            <th>Create date</th>
+            <th>#</th>
+        </tr>
+    </thead>
+
+    <tbody id="tbody">
+        @foreach (var calcTask in Model)
+        {
+            <tr class="tr_tbody">
+                <td scope="col">@calcTask.ID</td>
+                <td scope="col">@calcTask.Name</td>
+                <td scope="col">@calcTask.Username</td>
+                <td scope="col">@calcTask.CreatedDate</td>
+
+                <td scope="col">
+                   <div>
+                       <div class="row">
+                            <form asp-controller="Calculator" asp-action="Calculate" method="post" class="col-6">
+                                <input type="hidden" value="@calcTask.ID" name="taskId" />
+                                <input type="submit" class="btn btn-danger" value="Content" />
+                            </form>
+
+                            <form asp-controller="CalcTask" asp-action="Delete" method="post" class="col-6">
+                                <input type="hidden" value="@calcTask.ID" name="taskId" />
+                                <input type="submit" class="btn btn-danger" value="Delete" />
+                            </form>
+                       </div>
+                   </div>
+                </td>
+
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+<div class="menu-modal" id="modal">
+    <div style="display:block; text-align:right;" onclick="hideModal(this)">
+        <span id="btn_close" class="close-button"> &times;</span>
+    </div>
+
+    <div class="col-12">
+        <div class="row">
+            <div class="col-6">
+                <form asp-controller="CalcTask" asp-action="Create" method="post">
+                    <input type="text" name="taskName" />
+                    <input type="submit" class="btn btn-primary" value="Save" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="overlay" class="" onclick="hideModal(this)"></div>
+
+<script>
+    let overlay = document.getElementById("overlay");
+    let modall = document.getElementById("modal");
+    let btn_close = document.getElementById("btn_close");
+
+
+    function showModal() {
+        modall.classList.add("active");
+        overlay.classList.add("active");
+
+        document.getElementById("fooditem_count").value = 1;
+    }
+
+    function hideModal(btn) {
+        btn.addEventListener("click", function () {
+            overlay.classList.remove("active")
+            modall.classList.remove("active")
+        });
+    }
+</script>

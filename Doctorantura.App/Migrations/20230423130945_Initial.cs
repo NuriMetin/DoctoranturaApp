@@ -8,20 +8,6 @@ namespace Doctorantura.App.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AlfLines",
-                columns: table => new
-                {
-                    ID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    LineNum = table.Column<int>(nullable: false),
-                    Value = table.Column<double>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AlfLines", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -36,20 +22,6 @@ namespace Doctorantura.App.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Columns",
-                columns: table => new
-                {
-                    ID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(nullable: true),
-                    Row = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Columns", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Genders",
                 columns: table => new
                 {
@@ -60,76 +32,6 @@ namespace Doctorantura.App.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Genders", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "XLines",
-                columns: table => new
-                {
-                    ID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    LineNum = table.Column<int>(nullable: false),
-                    Value = table.Column<double>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_XLines", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "QamLines",
-                columns: table => new
-                {
-                    ID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    LineNum = table.Column<int>(nullable: false),
-                    Value = table.Column<double>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_QamLines", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Lines",
-                columns: table => new
-                {
-                    ID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(nullable: true),
-                    Row = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Lines", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "LinesSum",
-                columns: table => new
-                {
-                    ID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    LineNum = table.Column<int>(nullable: false),
-                    TotalSum = table.Column<double>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LinesSum", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "WLines",
-                columns: table => new
-                {
-                    ID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    LineNum = table.Column<int>(nullable: false),
-                    Value = table.Column<double>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_WLines", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -186,35 +88,6 @@ namespace Doctorantura.App.Migrations
                         name: "FK_AspNetUsers_Genders_GenderId",
                         column: x => x.GenderId,
                         principalTable: "Genders",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ColumnsLines",
-                columns: table => new
-                {
-                    ID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Value = table.Column<double>(nullable: false),
-                    ColumnId = table.Column<int>(nullable: false),
-                    LineId = table.Column<int>(nullable: false),
-                    ColumnNum = table.Column<int>(nullable: false),
-                    LineNum = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ColumnsLines", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_ColumnsLines_Columns_ColumnId",
-                        column: x => x.ColumnId,
-                        principalTable: "Columns",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ColumnsLines_Lines_LineId",
-                        column: x => x.LineId,
-                        principalTable: "Lines",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -304,6 +177,215 @@ namespace Doctorantura.App.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CalcTasks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    AppUserId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CalcTasks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CalcTasks_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AlfLines",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LineNum = table.Column<int>(nullable: false),
+                    Value = table.Column<double>(nullable: false),
+                    CalcTaskId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AlfLines", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_AlfLines_CalcTasks_CalcTaskId",
+                        column: x => x.CalcTaskId,
+                        principalTable: "CalcTasks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Columns",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: true),
+                    Row = table.Column<int>(nullable: false),
+                    CalcTaskId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Columns", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Columns_CalcTasks_CalcTaskId",
+                        column: x => x.CalcTaskId,
+                        principalTable: "CalcTasks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "XLines",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LineNum = table.Column<int>(nullable: false),
+                    Value = table.Column<double>(nullable: false),
+                    CalcTaskId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_XLines", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_XLines_CalcTasks_CalcTaskId",
+                        column: x => x.CalcTaskId,
+                        principalTable: "CalcTasks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "QamLines",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LineNum = table.Column<int>(nullable: false),
+                    Value = table.Column<double>(nullable: false),
+                    CalcTaskId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QamLines", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_QamLines_CalcTasks_CalcTaskId",
+                        column: x => x.CalcTaskId,
+                        principalTable: "CalcTasks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Lines",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: true),
+                    Row = table.Column<int>(nullable: false),
+                    CalcTaskId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lines", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Lines_CalcTasks_CalcTaskId",
+                        column: x => x.CalcTaskId,
+                        principalTable: "CalcTasks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LinesSum",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LineNum = table.Column<int>(nullable: false),
+                    TotalSum = table.Column<double>(nullable: false),
+                    CalcTaskId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LinesSum", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_LinesSum_CalcTasks_CalcTaskId",
+                        column: x => x.CalcTaskId,
+                        principalTable: "CalcTasks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WLines",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LineNum = table.Column<int>(nullable: false),
+                    Value = table.Column<double>(nullable: false),
+                    CalcTaskId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WLines", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_WLines_CalcTasks_CalcTaskId",
+                        column: x => x.CalcTaskId,
+                        principalTable: "CalcTasks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ColumnsLines",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Value = table.Column<double>(nullable: false),
+                    ColumnId = table.Column<int>(nullable: false),
+                    LineId = table.Column<int>(nullable: false),
+                    ColumnNum = table.Column<int>(nullable: false),
+                    LineNum = table.Column<int>(nullable: false),
+                    CalcTaskId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ColumnsLines", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_ColumnsLines_CalcTasks_CalcTaskId",
+                        column: x => x.CalcTaskId,
+                        principalTable: "CalcTasks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ColumnsLines_Columns_ColumnId",
+                        column: x => x.ColumnId,
+                        principalTable: "Columns",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ColumnsLines_Lines_LineId",
+                        column: x => x.LineId,
+                        principalTable: "Lines",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AlfLines_CalcTaskId",
+                table: "AlfLines",
+                column: "CalcTaskId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -349,6 +431,21 @@ namespace Doctorantura.App.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CalcTasks_AppUserId",
+                table: "CalcTasks",
+                column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Columns_CalcTaskId",
+                table: "Columns",
+                column: "CalcTaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ColumnsLines_CalcTaskId",
+                table: "ColumnsLines",
+                column: "CalcTaskId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ColumnsLines_ColumnId",
                 table: "ColumnsLines",
                 column: "ColumnId");
@@ -357,6 +454,31 @@ namespace Doctorantura.App.Migrations
                 name: "IX_ColumnsLines_LineId",
                 table: "ColumnsLines",
                 column: "LineId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_XLines_CalcTaskId",
+                table: "XLines",
+                column: "CalcTaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QamLines_CalcTaskId",
+                table: "QamLines",
+                column: "CalcTaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lines_CalcTaskId",
+                table: "Lines",
+                column: "CalcTaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LinesSum_CalcTaskId",
+                table: "LinesSum",
+                column: "CalcTaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WLines_CalcTaskId",
+                table: "WLines",
+                column: "CalcTaskId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -398,13 +520,16 @@ namespace Doctorantura.App.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "Columns");
 
             migrationBuilder.DropTable(
                 name: "Lines");
+
+            migrationBuilder.DropTable(
+                name: "CalcTasks");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Genders");

@@ -69,3 +69,117 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+
+
+/*----------Modal started--------*/
+.menu-modal {
+    border-radius: 15px;
+    z-index: 150;
+    position: absolute;
+    background-color: #ffffff;
+    /*border: solid 1px black;*/
+    display: block;
+    top: 260px;
+    left: 3%;
+    padding: 15px 20px 120px 40px;
+    width: 55%;
+    transition: ease-in-out;
+    transform: translate(0%, -25%) scale(0);
+    max-height: 60%;
+    max-width: 400%;
+    overflow-x: auto;
+    overflow-y: auto;
+    width: 95%;
+}
+
+
+#overlay {
+    position: fixed;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .5);
+    pointer-events: none;
+    transition: 200ms ease-in-out;
+}
+
+    #overlay.active {
+        opacity: 1;
+        pointer-events: all;
+        z-index: 3;
+    }
+
+.modal-close {
+    position: absolute;
+}
+
+#modal.active {
+    transform: translate(0%, -30%) scale(1);
+}
+
+.close-button {
+    border: none;
+    font-size: 22px;
+    background: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.print {
+    text-align: center;
+}
+
+#btnPrint {
+    width: 150px;
+    display: inline-block;
+    top: 28px;
+    background-color: #337ab7 !important;
+    border-color: #337ab7;
+}
+
+#confirm {
+    width: 150px;
+    display: inline-block;
+    background-color: #337ab7 !important;
+    border-color: #337ab7;
+}
+
+}
+
+
+#btnReverse {
+    width: 150px;
+    display: inline-block;
+    background-color: #337ab7 !important;
+    border-color: #337ab7;
+}
+
+#btn_add {
+    width: 150px;
+    display: inline-block;
+    background-color: #337ab7 !important;
+    border-color: #337ab7;
+}
+
+.dx-datagrid .dx-link {
+    text-decoration: none;
+    color: white;
+    background-color: red;
+    width: 80px;
+    height: 31px;
+    line-height: 2;
+}
+
+    .dx-datagrid .dx-link:hover {
+        text-decoration: none;
+        color: white;
+    }
+
+
+
+
+
+/*----------Modal started--------*/

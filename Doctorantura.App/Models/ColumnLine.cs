@@ -14,5 +14,8 @@
 
         public int ColumnNum { get; set; }
         public int LineNum { get; set; }
+
+        public int CalcTaskId { get; set; }
+        public virtual CalcTask CalcTask { get; set; }
     }
 }

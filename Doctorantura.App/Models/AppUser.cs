@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
@@ -28,7 +29,8 @@ namespace Doctorantura.App.Models
         public int GenderId { get; set; }
         public virtual Gender Gender { get; set; }
 
-        public string Image { get; set; }
+        public virtual ICollection<CalcTask> CalcTasks { get; set; }
 
+        public string Image { get; set; }
     }
 }

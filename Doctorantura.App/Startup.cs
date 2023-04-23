@@ -38,6 +38,7 @@ namespace Doctorantura.App
             services.AddTransient<IColumnNumRepository, ColumnRepository>();
             services.AddTransient<ILineNumRepository, LineRepository>();
             services.AddTransient<CalculateManager>();
+            services.AddTransient<CalcTaskManager>();
 
 
             services.Configure<CookiePolicyOptions>(options =>
@@ -94,7 +95,7 @@ namespace Doctorantura.App
         {
             endpoints.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Calculator}/{action=Calculate}/{id?}");
+                pattern: "{controller=CalcTask}/{action=TaskList}/{id?}");
         });
 
         }

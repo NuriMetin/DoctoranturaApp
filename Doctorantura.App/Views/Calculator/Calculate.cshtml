@@ -9,9 +9,16 @@
     }
 </style>
 
-<input id="btn_add" type="button" class="col-12 btn btn-primary d-block mr-5" value="Sütun əlavə et">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
+
+
+
 <div class="row">
+    <div class="container-fluid row">
+        <input id="btn_add" value="Sütun əlavə et" type="button" class=" btn btn-primary d-block col-12 ml-2" />
+    </div>
+
     <div class="col-7">
         <table class="table">
             <thead id="thead">
@@ -27,6 +34,8 @@
             </thead>
 
             <tbody id="tbody">
+                <input type="hidden" value="@Model.TaskId" id="taskId" />
+
                 @foreach (var lineNum in @Model.ColumnLines.GroupBy(x => x.LineNum).Select(x => x.Key).ToList())
                 {
                     <tr class="tr_tbody">
@@ -198,6 +207,8 @@
     let tr_tbody = document.getElementsByClassName("tr_tbody");
     let tr_head = document.getElementsByClassName("tr_head");
     let tr_delete = document.getElementById("tr_delete");
+    let taskId = document.getElementById("taskId").value;
+
 
     let tbody_sum = document.getElementById("tbody_sum");
     let tr_tbody_sum = document.getElementsByClassName("tr_tbody_sum");
@@ -235,7 +246,7 @@
         let value = arg.value;
 
     @*calcLineValue(arg.parentElement, columnNum, lineNum);*@
-                if (value != null && value != '' && value.length > 0) {
+                            if (value != null && value != '' && value.length > 0) {
             UpdateData(columnNum, lineNum, value);
         }
     }
@@ -454,7 +465,7 @@
         $.ajax({
             url: "/Calculator/UpdateData",
             method: "POST",
-            data: { columnNo: column, lineNo: line, val: val },
+            data: { columnNo: column, lineNo: line, val: val, taskId: taskId },
             success: function (res) {
                 location.reload();
             },
@@ -470,7 +481,7 @@
         $.ajax({
             url: "/Calculator/DeleteData",
             method: "POST",
-            data: { columnNo: columnNo },
+            data: { columnNo: columnNo, taskId: taskId },
             success: function (res) {
                 location.reload();
             },
@@ -484,7 +495,7 @@
         $.ajax({
             url: "/Calculator/UpdateColumnName",
             method: "POST",
-            data: { columnNum: columnNum, columnName: columnName },
+            data: { columnNum: columnNum, columnName: columnName, taskId: taskId },
             success: function (res) {
                 console.log(res.response);
             },
@@ -498,7 +509,7 @@
         $.ajax({
             url: "/Calculator/InsertData",
             method: "POST",
-            data: { columnNum: columnNum },
+            data: { columnNum: columnNum, taskId: taskId },
             success: function (res) {
                 location.reload();
             },

@@ -15,38 +15,40 @@ namespace Doctorantura.App.Services
     public class CalculateManager
     {
         private readonly AppDbContext _appDbContext;
+        private readonly CalcTaskManager _calcTaskManager;
 
-        public CalculateManager(AppDbContext appDbContext)
+        public CalculateManager(AppDbContext appDbContext, CalcTaskManager calcTaskManager)
         {
             _appDbContext = appDbContext;
+            _calcTaskManager = calcTaskManager;
         }
 
-        public async Task<CalculateVM> GetAllAsync()
+        public async Task<CalculateVM> GetAllByTaskIdAsync(int taskId)
         {
             CalculateVM calculateVM = new CalculateVM();
 
-            calculateVM.ColumnLines = await _appDbContext.ColumnsLines
+            calculateVM.ColumnLines = await _appDbContext.ColumnsLines.Where(x => x.CalcTaskId == taskId)
                 .Include(x => x.Column)
                 .Include(x => x.Line)
                 .ToListAsync();
 
-            calculateVM.LineSums = await _appDbContext.LinesSum.ToListAsync();
+            calculateVM.LineSums = await _appDbContext.LinesSum.Where(x => x.CalcTaskId == taskId).ToListAsync();
 
-            calculateVM.WLines = await _appDbContext.WLines.ToListAsync();
+            calculateVM.WLines = await _appDbContext.WLines.Where(x => x.CalcTaskId == taskId).ToListAsync();
 
-            calculateVM.AlfLines = await _appDbContext.AlfLines.ToListAsync();
+            calculateVM.AlfLines = await _appDbContext.AlfLines.Where(x => x.CalcTaskId == taskId).ToListAsync();
 
-            calculateVM.QamLines = await _appDbContext.QamLines.ToListAsync();
+            calculateVM.QamLines = await _appDbContext.QamLines.Where(x => x.CalcTaskId == taskId).ToListAsync();
 
-            calculateVM.XLines = await _appDbContext.XLines.ToListAsync();
+            calculateVM.XLines = await _appDbContext.XLines.Where(x => x.CalcTaskId == taskId).ToListAsync();
 
             return calculateVM;
         }
 
-        public async Task UpdateColumnName(int columnNum, string columnName)
+        public async Task UpdateColumnName(int columnNum, string columnName, int taskId)
         {
-            Column column = await _appDbContext.Columns.Where(x => x.Row == columnNum).FirstOrDefaultAsync();
-            Line line = await _appDbContext.Lines.Where(x => x.Row == columnNum).FirstOrDefaultAsync();
+            Column column = await _appDbContext.Columns.Where(x => x.Row == columnNum && x.CalcTaskId == taskId).FirstOrDefaultAsync();
+            Line line = await _appDbContext.Lines.Where(x => x.Row == columnNum && x.CalcTaskId == taskId).FirstOrDefaultAsync();
 
             column.Name = columnName;
             line.Name = columnName;
@@ -54,41 +56,46 @@ namespace Doctorantura.App.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task CreateAsync(int columnNum)
+        public async Task CreateAsync(int columnNum, int taskId)
         {
             string name = $"K{columnNum}";
 
-            await CreateColumnAsync(name, columnNum);
+            await CreateColumnAsync(name, columnNum, taskId);
 
-            await CreateLineAsync(name, columnNum);
+            await CreateLineAsync(name, columnNum, taskId);
 
-            await AddLineAsync(columnNum);
+            await AddLineAsync(columnNum, taskId);
 
-            await UpdateLineSumAsync(columnNum);
+            await UpdateLineSumAsync(columnNum, taskId);
 
-            await UpdateWLineAsync();
+            await UpdateWLineAsync(taskId);
 
-            await UpdateQamLineAsync(columnNum);
+            List<int> columnRows = await _appDbContext.Columns.Where(x => x.CalcTaskId == taskId).Select(x => x.Row).ToListAsync();
 
-            await UpdateXLineAsync();
+            foreach (var line in columnRows)
+            {
+                await UpdateQamLineAsync(line, taskId);
+            }
+
+            await UpdateXLineAsync(taskId);
         }
 
-        public async Task AddLineAsync(int columnNum)
+        public async Task AddLineAsync(int columnNum, int taskId)
         {
-            var columnFromDb = await _appDbContext.Columns.Where(x => x.Row == columnNum).FirstOrDefaultAsync();
-            var lineFromDb = await _appDbContext.Lines.Where(x => x.Row == columnNum).FirstOrDefaultAsync();
+            var columnFromDb = await _appDbContext.Columns.Where(x => x.Row == columnNum && x.CalcTaskId == taskId).FirstOrDefaultAsync();
+            var lineFromDb = await _appDbContext.Lines.Where(x => x.Row == columnNum && x.CalcTaskId == taskId).FirstOrDefaultAsync();
 
-            List<Column> columnListFromDb = await _appDbContext.Columns.Where(x => x.Row <= columnNum).ToListAsync();
-            List<Line> lineListFromDb = await _appDbContext.Lines.Where(x => x.Row <= columnNum).ToListAsync();
+            List<Column> columnListFromDb = await _appDbContext.Columns.Where(x => x.Row <= columnNum && x.CalcTaskId == taskId).ToListAsync();
+            List<Line> lineListFromDb = await _appDbContext.Lines.Where(x => x.Row <= columnNum && x.CalcTaskId == taskId).ToListAsync();
 
 
-            List<ColumnLine> columnDataFromDb = await _appDbContext.ColumnsLines.Where(x => x.ColumnNum == columnNum).ToListAsync();
-            List<ColumnLine> lineDataFromDb = await _appDbContext.ColumnsLines.Where(x => x.LineNum == columnNum).ToListAsync();
+            List<ColumnLine> columnDataFromDb = await _appDbContext.ColumnsLines.Where(x => x.ColumnNum == columnNum && x.CalcTaskId == taskId).ToListAsync();
+            List<ColumnLine> lineDataFromDb = await _appDbContext.ColumnsLines.Where(x => x.LineNum == columnNum && x.CalcTaskId == taskId).ToListAsync();
 
             for (int i = 1; i <= columnNum; i++)
             {
-                ColumnLine columnData = columnDataFromDb.Where(x => x.LineNum == i).FirstOrDefault();
-                ColumnLine lineData = columnDataFromDb.Where(x => x.ColumnNum == i).FirstOrDefault();
+                ColumnLine columnData = columnDataFromDb.Where(x => x.LineNum == i && x.CalcTaskId == taskId).FirstOrDefault();
+                ColumnLine lineData = columnDataFromDb.Where(x => x.ColumnNum == i && x.CalcTaskId == taskId).FirstOrDefault();
 
 
                 if (i != columnNum)
@@ -102,7 +109,8 @@ namespace Doctorantura.App.Services
                             ColumnNum = columnNum,
                             LineId = lineListFromDb.Where(x => x.Row == i).FirstOrDefault().ID,
                             LineNum = i,
-                            Value = 0
+                            Value = 0,
+                            CalcTaskId = taskId,
                         };
 
                         await _appDbContext.ColumnsLines.AddAsync(columnData);
@@ -118,7 +126,8 @@ namespace Doctorantura.App.Services
                             ColumnNum = i,
                             LineId = lineFromDb.ID,
                             LineNum = columnNum,
-                            Value = 0
+                            Value = 0,
+                            CalcTaskId = taskId,
                         };
 
                         await _appDbContext.ColumnsLines.AddAsync(lineData);
@@ -135,7 +144,8 @@ namespace Doctorantura.App.Services
                         ColumnNum = columnNum,
                         LineId = lineFromDb.ID,
                         LineNum = columnNum,
-                        Value = 1
+                        Value = 1,
+                        CalcTaskId = taskId
                     };
 
                     await _appDbContext.ColumnsLines.AddAsync(columnLine);
@@ -144,16 +154,17 @@ namespace Doctorantura.App.Services
             }
         }
 
-        private async Task CreateColumnAsync(string name, int columnNum)
+        private async Task CreateColumnAsync(string name, int columnNum, int taskId)
         {
-            Column column = await _appDbContext.Columns.FirstOrDefaultAsync(x => x.Row == columnNum);
+            Column column = await _appDbContext.Columns.FirstOrDefaultAsync(x => x.Row == columnNum && x.CalcTaskId == taskId);
 
             if (column == null || column == default)
             {
                 column = new Column
                 {
                     Name = name,
-                    Row = columnNum
+                    Row = columnNum,
+                    CalcTaskId = taskId
                 };
 
                 await _appDbContext.Columns.AddAsync(column);
@@ -163,21 +174,23 @@ namespace Doctorantura.App.Services
             {
                 column.Name = name;
                 column.Row = columnNum;
+                column.CalcTaskId = taskId;
             }
 
             await _appDbContext.SaveChangesAsync();
         }
 
-        private async Task CreateLineAsync(string name, int lineNum)
+        private async Task CreateLineAsync(string name, int lineNum, int taskId)
         {
-            Line line = await _appDbContext.Lines.FirstOrDefaultAsync(x => x.Row == lineNum);
+            Line line = await _appDbContext.Lines.FirstOrDefaultAsync(x => x.Row == lineNum && x.CalcTaskId == taskId);
 
             if (line == null || line == default)
             {
                 line = new Line
                 {
                     Name = name,
-                    Row = lineNum
+                    Row = lineNum,
+                    CalcTaskId = taskId
                 };
 
                 await _appDbContext.Lines.AddAsync(line);
@@ -187,38 +200,38 @@ namespace Doctorantura.App.Services
             {
                 line.Name = name;
                 line.Row = lineNum;
+                line.CalcTaskId = taskId;
             }
 
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(int columnNo, int lineNo, double val)
+        public async Task UpdateAsync(int columnNo, int lineNo, double val, int taskId)
         {
-            Column column = await _appDbContext.Columns.Where(x => x.Row == columnNo).FirstOrDefaultAsync();
-            Line line = await _appDbContext.Lines.Where(x => x.Row == lineNo).FirstOrDefaultAsync();
+            Column column = await _appDbContext.Columns.Where(x => x.Row == columnNo && x.CalcTaskId == taskId).FirstOrDefaultAsync();
+            Line line = await _appDbContext.Lines.Where(x => x.Row == lineNo && x.CalcTaskId == taskId).FirstOrDefaultAsync();
 
-            List<int> columnRows = await _appDbContext.Columns.Select(x => x.Row).ToListAsync();
+            List<int> columnRows = await _appDbContext.Columns.Where(x => x.CalcTaskId == taskId).Select(x => x.Row).ToListAsync();
 
-            await UpdateColumnDataAsync(column, columnNo, line.ID, lineNo, val);
-            await UpdateLineDataAsync(line, columnNo, column.ID, lineNo, val);
+            await UpdateColumnDataAsync(column, columnNo, line.ID, lineNo, val, taskId);
+            await UpdateLineDataAsync(line, columnNo, column.ID, lineNo, val, taskId);
 
+            await UpdateLineSumAsync(lineNo, taskId);
 
-            await UpdateLineSumAsync(lineNo);
-
-            await UpdateWLineAsync();
+            await UpdateWLineAsync(taskId);
 
             foreach (var columnRow in columnRows)
             {
-                await UpdateQamLineAsync(columnRow);
+                await UpdateQamLineAsync(columnRow, taskId);
             }
 
-            await UpdateXLineAsync();
+            await UpdateXLineAsync(taskId);
         }
 
-        private async Task UpdateColumnDataAsync(Column column, int columnNo, int lineId, int lineNo, double val)
+        private async Task UpdateColumnDataAsync(Column column, int columnNo, int lineId, int lineNo, double val, int taskId)
         {
             ColumnLine columnDataFromDb = await _appDbContext.ColumnsLines
-                .Where(x => x.ColumnNum == columnNo && x.LineNum == lineNo)
+                .Where(x => x.ColumnNum == columnNo && x.LineNum == lineNo && x.CalcTaskId == taskId)
                 .FirstOrDefaultAsync();
 
             if (columnDataFromDb == null || columnDataFromDb == default)
@@ -229,7 +242,8 @@ namespace Doctorantura.App.Services
                     LineId = lineId,
                     ColumnNum = columnNo,
                     LineNum = lineNo,
-                    Value = val
+                    Value = val,
+                    CalcTaskId = taskId
                 };
 
                 await _appDbContext.ColumnsLines.AddAsync(columnDataFromDb);
@@ -243,10 +257,10 @@ namespace Doctorantura.App.Services
             }
         }
 
-        private async Task UpdateLineDataAsync(Line line, int columnNo, int columnId, int lineNo, double val)
+        private async Task UpdateLineDataAsync(Line line, int columnNo, int columnId, int lineNo, double val, int taskId)
         {
             ColumnLine lineDataFromDb = await _appDbContext.ColumnsLines
-               .Where(x => x.LineNum == columnNo && x.ColumnNum == lineNo)
+               .Where(x => x.LineNum == columnNo && x.ColumnNum == lineNo && x.CalcTaskId == taskId)
                .FirstOrDefaultAsync();
 
             if (lineDataFromDb == null || lineDataFromDb == default)
@@ -257,7 +271,8 @@ namespace Doctorantura.App.Services
                     LineId = line.ID,
                     ColumnNum = columnNo,
                     LineNum = lineNo,
-                    Value = 1 / val
+                    Value = 1 / val,
+                    CalcTaskId = taskId
                 };
 
                 await _appDbContext.ColumnsLines.AddAsync(lineDataFromDb);
@@ -271,18 +286,19 @@ namespace Doctorantura.App.Services
             }
         }
 
-        private async Task UpdateLineSumAsync(int lineNo)
+        private async Task UpdateLineSumAsync(int lineNo, int taskId)
         {
-            double sum = await _appDbContext.ColumnsLines.Where(x => x.LineNum == lineNo).SumAsync(x => x.Value);
+            double sum = await _appDbContext.ColumnsLines.Where(x => x.LineNum == lineNo && x.CalcTaskId == taskId).SumAsync(x => x.Value);
 
-            LineSum lineSum = await _appDbContext.LinesSum.FirstOrDefaultAsync(x => x.LineNum == lineNo);
+            LineSum lineSum = await _appDbContext.LinesSum.FirstOrDefaultAsync(x => x.LineNum == lineNo && x.CalcTaskId == taskId);
 
             if (lineSum == null || lineSum == default)
             {
                 lineSum = new LineSum
                 {
                     LineNum = lineNo,
-                    TotalSum = sum
+                    TotalSum = sum,
+                    CalcTaskId = taskId
                 };
                 await _appDbContext.LinesSum.AddAsync(lineSum);
             }
@@ -291,27 +307,29 @@ namespace Doctorantura.App.Services
             {
                 lineSum.LineNum = lineNo;
                 lineSum.TotalSum = sum;
+                lineSum.CalcTaskId = taskId;
             }
 
             await _appDbContext.SaveChangesAsync();
         }
 
-        private async Task UpdateWLineAsync()
+        private async Task UpdateWLineAsync(int taskId)
         {
-            var linesSum = await _appDbContext.LinesSum.ToListAsync();
+            var linesSum = await _appDbContext.LinesSum.Where(x => x.CalcTaskId == taskId).ToListAsync();
             var total = linesSum.Sum(x => x.TotalSum);
 
 
             foreach (var lineSum in linesSum)
             {
-                WLine wLine = await _appDbContext.WLines.FirstOrDefaultAsync(x => x.LineNum == lineSum.LineNum);
+                WLine wLine = await _appDbContext.WLines.FirstOrDefaultAsync(x => x.LineNum == lineSum.LineNum && x.CalcTaskId == taskId);
 
                 if (wLine == null || wLine == default)
                 {
                     wLine = new WLine
                     {
                         LineNum = lineSum.LineNum,
-                        Value = lineSum.TotalSum / total
+                        Value = lineSum.TotalSum / total,
+                        CalcTaskId = taskId
                     };
 
                     await _appDbContext.WLines.AddAsync(wLine);
@@ -321,30 +339,32 @@ namespace Doctorantura.App.Services
                 {
                     wLine.LineNum = lineSum.LineNum;
                     wLine.Value = lineSum.TotalSum / total;
+                    wLine.CalcTaskId = taskId;
                 }
                 await _appDbContext.SaveChangesAsync();
 
-                await UpdateAlfLineAsync(wLine);
+                await UpdateAlfLineAsync(wLine, taskId);
             }
         }
 
-        private async Task UpdateXLineAsync()
+        private async Task UpdateXLineAsync(int taskId)
         {
-            var lines = await _appDbContext.Lines.Select(x=>x.Row).ToListAsync();
+            var lines = await _appDbContext.Lines.Where(x => x.CalcTaskId == taskId).Select(x => x.Row).ToListAsync();
 
             foreach (var lineNo in lines)
             {
-                var qamLine = await _appDbContext.QamLines.Where(x => x.LineNum == lineNo).FirstOrDefaultAsync();
-                var wLine = await _appDbContext.WLines.Where(x => x.LineNum == lineNo).FirstOrDefaultAsync();
+                var qamLine = await _appDbContext.QamLines.Where(x => x.LineNum == lineNo && x.CalcTaskId == taskId).FirstOrDefaultAsync();
+                var wLine = await _appDbContext.WLines.Where(x => x.LineNum == lineNo && x.CalcTaskId == taskId).FirstOrDefaultAsync();
 
-                XLine xLine = await _appDbContext.XLines.FirstOrDefaultAsync(x => x.LineNum == lineNo);
+                XLine xLine = await _appDbContext.XLines.FirstOrDefaultAsync(x => x.LineNum == lineNo && x.CalcTaskId == taskId);
 
                 if (xLine == null || xLine == default)
                 {
                     xLine = new XLine
                     {
                         LineNum = lineNo,
-                        Value = qamLine.Value / wLine.Value
+                        Value = qamLine.Value / wLine.Value,
+                        CalcTaskId = taskId
                     };
 
                     await _appDbContext.XLines.AddAsync(xLine);
@@ -354,21 +374,23 @@ namespace Doctorantura.App.Services
                 {
                     xLine.LineNum = lineNo;
                     xLine.Value = qamLine.Value / wLine.Value;
+                    xLine.CalcTaskId = taskId;
                 }
                 await _appDbContext.SaveChangesAsync();
             }
         }
 
-        private async Task UpdateAlfLineAsync(WLine wLine)
+        private async Task UpdateAlfLineAsync(WLine wLine, int taskId)
         {
-            AlfLine alfLine = await _appDbContext.AlfLines.FirstOrDefaultAsync(x => x.LineNum == wLine.LineNum);
+            AlfLine alfLine = await _appDbContext.AlfLines.FirstOrDefaultAsync(x => x.LineNum == wLine.LineNum && x.CalcTaskId == taskId);
 
             if (alfLine == null || alfLine == default)
             {
                 alfLine = new AlfLine
                 {
                     LineNum = wLine.LineNum,
-                    Value = wLine.Value * 8
+                    Value = wLine.Value * 8,
+                    CalcTaskId = taskId
                 };
 
                 await _appDbContext.AlfLines.AddAsync(alfLine);
@@ -378,32 +400,34 @@ namespace Doctorantura.App.Services
             {
                 alfLine.LineNum = wLine.LineNum;
                 alfLine.Value = wLine.Value * 8;
+                alfLine.CalcTaskId = taskId;
             }
 
             await _appDbContext.SaveChangesAsync();
         }
 
-        private async Task UpdateQamLineAsync(int lineNum)
+        private async Task UpdateQamLineAsync(int lineNum, int taskId)
         {
-            var lineValues = await _appDbContext.ColumnsLines.Where(x => x.LineNum == lineNum).ToListAsync();
+            var lineValues = await _appDbContext.ColumnsLines.Where(x => x.LineNum == lineNum && x.CalcTaskId == taskId).ToListAsync();
 
-            var wLines = await _appDbContext.WLines.ToListAsync();
+            var wLines = await _appDbContext.WLines.Where(x => x.CalcTaskId == taskId).ToListAsync();
 
             double total = 0;
 
             foreach (var lineValue in lineValues)
             {
-                total += lineValue.Value * wLines.FirstOrDefault(x => x.LineNum == lineValue.ColumnNum).Value;
+                total += lineValue.Value * wLines.FirstOrDefault(x => x.LineNum == lineValue.ColumnNum && x.CalcTaskId == taskId).Value;
             }
 
-            var qamLine = await _appDbContext.QamLines.FirstOrDefaultAsync(x => x.LineNum == lineNum);
+            var qamLine = await _appDbContext.QamLines.FirstOrDefaultAsync(x => x.LineNum == lineNum && x.CalcTaskId == taskId);
 
             if (qamLine == null || qamLine == default)
             {
                 qamLine = new QamLine
                 {
                     LineNum = lineNum,
-                    Value = total
+                    Value = total,
+                    CalcTaskId = taskId
                 };
 
                 await _appDbContext.QamLines.AddAsync(qamLine);
@@ -413,32 +437,32 @@ namespace Doctorantura.App.Services
             {
                 qamLine.LineNum = lineNum;
                 qamLine.Value = total;
+                qamLine.CalcTaskId = taskId;
             }
 
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteByColumnNoAsync(int columnNo)
+        public async Task DeleteByColumnNoAsync(int columnNo, int taskId)
         {
-            await DeleteColumnLinesByColumnNo(columnNo);
-            await DeleteColumnByRow(columnNo);
-            await DeleteLineByRow(columnNo);
+            await DeleteColumnLinesByColumnNo(columnNo, taskId);
+            await DeleteColumnByRow(columnNo, taskId);
+            await DeleteLineByRow(columnNo, taskId);
 
-            await DeleteLineSumByLineNo(columnNo);
+            await DeleteLineSumByLineNo(columnNo, taskId);
 
-            await DeleteAlfLineByLineNo(columnNo);
-            await DeleteWLineByLineNo(columnNo);
+            await DeleteAlfLineByLineNo(columnNo, taskId);
+            await DeleteWLineByLineNo(columnNo, taskId);
 
-            await DeleteQamLineByLineNo(columnNo);
+            await DeleteQamLineByLineNo(columnNo, taskId);
 
-
-            await DeleteXLineByLineNo(columnNo);
+            await DeleteXLineByLineNo(columnNo, taskId);
         }
 
-        private async Task DeleteColumnByRow(int row)
+        private async Task DeleteColumnByRow(int row, int taskId)
         {
-            var columns = await _appDbContext.Columns.Where(x => x.Row >= row).OrderByDescending(x => x.Row).ToListAsync();
-            _appDbContext.Columns.Remove(columns.Where(x => x.Row == row).FirstOrDefault());
+            var columns = await _appDbContext.Columns.Where(x => x.Row >= row && x.CalcTaskId == taskId).OrderByDescending(x => x.Row).ToListAsync();
+            _appDbContext.Columns.Remove(columns.Where(x => x.Row == row && x.CalcTaskId == taskId).FirstOrDefault());
 
             for (int i = 0; i < columns.Where(x => x.Row >= row).Count() - 1; i++)
             {
@@ -449,10 +473,10 @@ namespace Doctorantura.App.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        private async Task DeleteLineByRow(int row)
+        private async Task DeleteLineByRow(int row, int taskId)
         {
-            var lines = await _appDbContext.Lines.Where(x => x.Row >= row).OrderByDescending(x => x.Row).ToListAsync();
-            _appDbContext.Lines.Remove(lines.Where(x => x.Row == row).FirstOrDefault());
+            var lines = await _appDbContext.Lines.Where(x => x.Row >= row && x.CalcTaskId == taskId).OrderByDescending(x => x.Row).ToListAsync();
+            _appDbContext.Lines.Remove(lines.Where(x => x.Row == row && x.CalcTaskId == taskId).FirstOrDefault());
 
             for (int i = 0; i < lines.Where(x => x.Row >= row).Count() - 1; i++)
             {
@@ -463,14 +487,14 @@ namespace Doctorantura.App.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        private async Task DeleteColumnLinesByColumnNo(int columnNo)
+        private async Task DeleteColumnLinesByColumnNo(int columnNo, int taskId)
         {
-            var columnLinesForDelete = await _appDbContext.ColumnsLines.Where(x => x.ColumnNum == columnNo || x.LineNum == columnNo).ToListAsync();
+            var columnLinesForDelete = await _appDbContext.ColumnsLines.Where(x => x.ColumnNum == columnNo || x.LineNum == columnNo && x.CalcTaskId == taskId).ToListAsync();
 
             _appDbContext.ColumnsLines.RemoveRange(columnLinesForDelete);
             await _appDbContext.SaveChangesAsync();
 
-            var columnLines = await _appDbContext.ColumnsLines.Where(x => x.ColumnNum >= columnNo || x.LineNum >= columnNo).OrderBy(x => x.ColumnNum).OrderBy(x => x.LineNum).ToListAsync();
+            var columnLines = await _appDbContext.ColumnsLines.Where(x => x.ColumnNum >= columnNo || x.LineNum >= columnNo && x.CalcTaskId == taskId).OrderBy(x => x.ColumnNum).OrderBy(x => x.LineNum).ToListAsync();
 
             foreach (var grouppedColumnLine in columnLines.GroupBy(x => x.ColumnNum))
             {
@@ -491,11 +515,11 @@ namespace Doctorantura.App.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        private async Task DeleteLineSumByLineNo(int lineNo)
+        private async Task DeleteLineSumByLineNo(int lineNo, int taskId)
         {
-            var linesSum = await _appDbContext.LinesSum.Where(x => x.LineNum >= lineNo).OrderByDescending(x => x.LineNum).ToListAsync();
+            var linesSum = await _appDbContext.LinesSum.Where(x => x.LineNum >= lineNo && x.CalcTaskId == taskId).OrderByDescending(x => x.LineNum).ToListAsync();
 
-            _appDbContext.LinesSum.Remove(linesSum.Where(x => x.LineNum == lineNo).FirstOrDefault());
+            _appDbContext.LinesSum.Remove(linesSum.Where(x => x.LineNum == lineNo && x.CalcTaskId == taskId).FirstOrDefault());
 
             for (int i = 0; i < linesSum.Where(x => x.LineNum >= lineNo).Count() - 1; i++)
             {
@@ -509,15 +533,15 @@ namespace Doctorantura.App.Services
 
             foreach (var line in lines)
             {
-                await UpdateLineSumAsync(line);
+                await UpdateLineSumAsync(line, taskId);
             }
         }
 
-        private async Task DeleteWLineByLineNo(int lineNo)
+        private async Task DeleteWLineByLineNo(int lineNo, int taskId)
         {
-            var wLines = await _appDbContext.WLines.Where(x => x.LineNum >= lineNo).OrderByDescending(x => x.LineNum).ToListAsync();
+            var wLines = await _appDbContext.WLines.Where(x => x.LineNum >= lineNo && x.CalcTaskId == taskId).OrderByDescending(x => x.LineNum).ToListAsync();
 
-            _appDbContext.WLines.Remove(wLines.Where(x => x.LineNum == lineNo).FirstOrDefault());
+            _appDbContext.WLines.Remove(wLines.Where(x => x.LineNum == lineNo && x.CalcTaskId == taskId).FirstOrDefault());
 
             for (int i = 0; i < wLines.Where(x => x.LineNum >= lineNo).Count() - 1; i++)
             {
@@ -526,14 +550,14 @@ namespace Doctorantura.App.Services
 
             await _appDbContext.SaveChangesAsync();
 
-            await UpdateWLineAsync();
+            await UpdateWLineAsync(taskId);
         }
 
-        private async Task DeleteAlfLineByLineNo(int lineNo)
+        private async Task DeleteAlfLineByLineNo(int lineNo, int taskId)
         {
-            var alfLines = await _appDbContext.AlfLines.Where(x => x.LineNum >= lineNo).OrderByDescending(x => x.LineNum).ToListAsync();
+            var alfLines = await _appDbContext.AlfLines.Where(x => x.LineNum >= lineNo && x.CalcTaskId == taskId).OrderByDescending(x => x.LineNum).ToListAsync();
 
-            _appDbContext.AlfLines.Remove(alfLines.Where(x => x.LineNum == lineNo).FirstOrDefault());
+            _appDbContext.AlfLines.Remove(alfLines.Where(x => x.LineNum == lineNo && x.CalcTaskId == taskId).FirstOrDefault());
 
             for (int i = 0; i < alfLines.Where(x => x.LineNum >= lineNo).Count() - 1; i++)
             {
@@ -543,11 +567,11 @@ namespace Doctorantura.App.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        private async Task DeleteQamLineByLineNo(int lineNo)
+        private async Task DeleteQamLineByLineNo(int lineNo, int taskId)
         {
-            var qamLines = await _appDbContext.QamLines.Where(x => x.LineNum >= lineNo).OrderByDescending(x => x.LineNum).ToListAsync();
+            var qamLines = await _appDbContext.QamLines.Where(x => x.LineNum >= lineNo && x.CalcTaskId == taskId).OrderByDescending(x => x.LineNum).ToListAsync();
 
-            _appDbContext.QamLines.Remove(qamLines.Where(x => x.LineNum == lineNo).FirstOrDefault());
+            _appDbContext.QamLines.Remove(qamLines.Where(x => x.LineNum == lineNo && x.CalcTaskId == taskId).FirstOrDefault());
 
             for (int i = 0; i < qamLines.Where(x => x.LineNum >= lineNo).Count() - 1; i++)
             {
@@ -558,20 +582,19 @@ namespace Doctorantura.App.Services
 
             List<int> columnRows = await _appDbContext.Columns.Select(x => x.Row).ToListAsync();
 
-
             foreach (var line in columnRows)
             {
-                await UpdateQamLineAsync(line);
+                await UpdateQamLineAsync(line, taskId);
             }
 
 
         }
 
-        private async Task DeleteXLineByLineNo(int lineNo)
+        private async Task DeleteXLineByLineNo(int lineNo, int taskId)
         {
-            var xLines = await _appDbContext.XLines.Where(x => x.LineNum >= lineNo).OrderByDescending(x => x.LineNum).ToListAsync();
+            var xLines = await _appDbContext.XLines.Where(x => x.LineNum >= lineNo && x.CalcTaskId == taskId).OrderByDescending(x => x.LineNum).ToListAsync();
 
-            _appDbContext.XLines.Remove(xLines.Where(x => x.LineNum == lineNo).FirstOrDefault());
+            _appDbContext.XLines.Remove(xLines.Where(x => x.LineNum == lineNo && x.CalcTaskId == taskId).FirstOrDefault());
 
             for (int i = 0; i < xLines.Where(x => x.LineNum >= lineNo).Count() - 1; i++)
             {
@@ -580,7 +603,30 @@ namespace Doctorantura.App.Services
 
             await _appDbContext.SaveChangesAsync();
 
-            await UpdateXLineAsync();
+            await UpdateXLineAsync(taskId);
+        }
+
+        public async Task DeleteAllByTaskId(int taskId)
+        {
+            List<XLine> xLines = await _appDbContext.XLines.Where(x => x.CalcTaskId == taskId).ToListAsync();
+            List<QamLine> qamLines = await _appDbContext.QamLines.Where(x => x.CalcTaskId == taskId).ToListAsync();
+            List<AlfLine> alfLines = await _appDbContext.AlfLines.Where(x => x.CalcTaskId == taskId).ToListAsync();
+            List<WLine> wLines = await _appDbContext.WLines.Where(x => x.CalcTaskId == taskId).ToListAsync();
+            List<LineSum> linesSum = await _appDbContext.LinesSum.Where(x => x.CalcTaskId == taskId).ToListAsync();
+            List<ColumnLine> columnLines = await _appDbContext.ColumnsLines.Where(x => x.CalcTaskId == taskId).ToListAsync();
+            List<Column> columns = await _appDbContext.Columns.Where(x => x.CalcTaskId == taskId).ToListAsync();
+            List<Line> lines = await _appDbContext.Lines.Where(x => x.CalcTaskId == taskId).ToListAsync();
+
+            _appDbContext.XLines.RemoveRange(xLines);
+            _appDbContext.QamLines.RemoveRange(qamLines);
+            _appDbContext.AlfLines.RemoveRange(alfLines);
+            _appDbContext.WLines.RemoveRange(wLines);
+            _appDbContext.LinesSum.RemoveRange(linesSum);
+            _appDbContext.ColumnsLines.RemoveRange(columnLines);
+            _appDbContext.Columns.RemoveRange(columns);
+            _appDbContext.Lines.RemoveRange(lines);
+
+            await _appDbContext.SaveChangesAsync();
         }
     }
 }

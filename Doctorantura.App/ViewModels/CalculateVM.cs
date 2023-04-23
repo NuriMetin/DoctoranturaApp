@@ -13,5 +13,7 @@ namespace Doctorantura.App.ViewModels
         public List<AlfLine> AlfLines { get; set; }
         public List<QamLine> QamLines { get; set; }
         public List<XLine> XLines { get; set; }
+        public CalcTask CalcTask { get; set; }
+        public int TaskId { get; set; }
     }
 }

@@ -19,20 +19,19 @@ namespace Doctorantura.App.Controllers
             _calculateManager = calculateManager;
         }
 
-        public async Task<IActionResult> Calculate()
+        public async Task<IActionResult> Calculate(int taskId)
         {
-
-            var calculateVm = await _calculateManager.GetAllAsync();
-
+            var calculateVm = await _calculateManager.GetAllByTaskIdAsync(taskId);
+            calculateVm.TaskId = taskId;
 
             return View(calculateVm);
         }
 
-        public async Task<IActionResult> UpdateColumnName(int columnNum,string columnName)
+        public async Task<IActionResult> UpdateColumnName(int columnNum,string columnName, int taskId)
         {
             try
             {
-                await _calculateManager.UpdateColumnName(columnNum, columnName);
+                await _calculateManager.UpdateColumnName(columnNum, columnName, taskId);
             }
 
             catch (System.Exception exp)
@@ -44,11 +43,11 @@ namespace Doctorantura.App.Controllers
         }
 
 
-        public async Task<IActionResult> InsertData(int columnNum)
+        public async Task<IActionResult> InsertData(int columnNum, int taskId)
         {
             try
             {
-                await _calculateManager.CreateAsync(columnNum);
+                await _calculateManager.CreateAsync(columnNum, taskId);
             }
 
             catch (System.Exception exp)
@@ -60,14 +59,14 @@ namespace Doctorantura.App.Controllers
             return Json(new { response = "Success" });
         }
 
-        public async Task<IActionResult> UpdateData(int columnNo, int lineNo, double val)
+        public async Task<IActionResult> UpdateData(int columnNo, int lineNo, double val,int taskId)
         {
             try
             {
                 if(columnNo != 0 && lineNo!=0 && val!=0)
                 {
-                    await _calculateManager.UpdateAsync(columnNo, lineNo, val);
-                    await _calculateManager.UpdateAsync(lineNo, columnNo, 1 / val);
+                    await _calculateManager.UpdateAsync(columnNo, lineNo, val, taskId);
+                    await _calculateManager.UpdateAsync(lineNo, columnNo, 1 / val, taskId);
                 }
             }
 
@@ -80,13 +79,13 @@ namespace Doctorantura.App.Controllers
             return Json(new { response = "Success" });
         }
 
-        public async Task<IActionResult> DeleteData(int columnNo)
+        public async Task<IActionResult> DeleteData(int columnNo, int taskId)
         {
             try
             {
                 if (columnNo != 0)
                 {
-                    await _calculateManager.DeleteByColumnNoAsync(columnNo);
+                    await _calculateManager.DeleteByColumnNoAsync(columnNo, taskId);
                    
                 }
             }

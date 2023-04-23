@@ -316,3 +316,4 @@ D:\Metin\Projects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Micro
 D:\Metin\Projects\DoctoranturaApp\Doctorantura.App\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Stores.dll
 D:\Metin\Projects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\Razor\Views\Account\Login.cshtml.g.cs
 D:\Metin\Projects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\Razor\Views\Account\Register.cshtml.g.cs
+D:\Metin\Projects\DoctoranturaApp\Doctorantura.App\obj\Debug\netcoreapp3.1\Razor\Views\CalcTask\TaskList.cshtml.g.cs

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Doctorantura.App.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230420142005_Initial")]
+    [Migration("20230423130945_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,6 +28,9 @@ namespace Doctorantura.App.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("CalcTaskId")
+                        .HasColumnType("int");
+
                     b.Property<int>("LineNum")
                         .HasColumnType("int");
 
@@ -35,6 +38,8 @@ namespace Doctorantura.App.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("CalcTaskId");
 
                     b.ToTable("AlfLines");
                 });
@@ -130,12 +135,38 @@ namespace Doctorantura.App.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("Doctorantura.App.Models.CalcTask", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("CalcTasks");
+                });
+
             modelBuilder.Entity("Doctorantura.App.Models.Column", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CalcTaskId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -144,6 +175,8 @@ namespace Doctorantura.App.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("CalcTaskId");
 
                     b.ToTable("Columns");
                 });
@@ -154,6 +187,9 @@ namespace Doctorantura.App.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CalcTaskId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ColumnId")
                         .HasColumnType("int");
@@ -171,6 +207,8 @@ namespace Doctorantura.App.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("CalcTaskId");
 
                     b.HasIndex("ColumnId");
 
@@ -201,6 +239,9 @@ namespace Doctorantura.App.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("CalcTaskId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -208,6 +249,8 @@ namespace Doctorantura.App.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("CalcTaskId");
 
                     b.ToTable("Lines");
                 });
@@ -219,6 +262,9 @@ namespace Doctorantura.App.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("CalcTaskId")
+                        .HasColumnType("int");
+
                     b.Property<int>("LineNum")
                         .HasColumnType("int");
 
@@ -226,6 +272,8 @@ namespace Doctorantura.App.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("CalcTaskId");
 
                     b.ToTable("LinesSum");
                 });
@@ -237,6 +285,9 @@ namespace Doctorantura.App.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("CalcTaskId")
+                        .HasColumnType("int");
+
                     b.Property<int>("LineNum")
                         .HasColumnType("int");
 
@@ -244,6 +295,8 @@ namespace Doctorantura.App.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("CalcTaskId");
 
                     b.ToTable("QamLines");
                 });
@@ -255,6 +308,9 @@ namespace Doctorantura.App.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("CalcTaskId")
+                        .HasColumnType("int");
+
                     b.Property<int>("LineNum")
                         .HasColumnType("int");
 
@@ -262,6 +318,8 @@ namespace Doctorantura.App.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("CalcTaskId");
 
                     b.ToTable("WLines");
                 });
@@ -273,6 +331,9 @@ namespace Doctorantura.App.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("CalcTaskId")
+                        .HasColumnType("int");
+
                     b.Property<int>("LineNum")
                         .HasColumnType("int");
 
@@ -280,6 +341,8 @@ namespace Doctorantura.App.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("CalcTaskId");
 
                     b.ToTable("XLines");
                 });
@@ -415,6 +478,15 @@ namespace Doctorantura.App.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("Doctorantura.App.Models.AlfLine", b =>
+                {
+                    b.HasOne("Doctorantura.App.Models.CalcTask", "CalcTask")
+                        .WithMany("AlfLines")
+                        .HasForeignKey("CalcTaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Doctorantura.App.Models.AppUser", b =>
                 {
                     b.HasOne("Doctorantura.App.Models.Gender", "Gender")
@@ -424,17 +496,84 @@ namespace Doctorantura.App.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Doctorantura.App.Models.CalcTask", b =>
+                {
+                    b.HasOne("Doctorantura.App.Models.AppUser", "AppUser")
+                        .WithMany("CalcTasks")
+                        .HasForeignKey("AppUserId");
+                });
+
+            modelBuilder.Entity("Doctorantura.App.Models.Column", b =>
+                {
+                    b.HasOne("Doctorantura.App.Models.CalcTask", "CalcTask")
+                        .WithMany("Columns")
+                        .HasForeignKey("CalcTaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Doctorantura.App.Models.ColumnLine", b =>
                 {
+                    b.HasOne("Doctorantura.App.Models.CalcTask", "CalcTask")
+                        .WithMany("ColumnLines")
+                        .HasForeignKey("CalcTaskId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Doctorantura.App.Models.Column", "Column")
-                        .WithMany()
+                        .WithMany("ColumnLines")
                         .HasForeignKey("ColumnId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Doctorantura.App.Models.Line", "Line")
                         .WithMany("ColumnsLines")
                         .HasForeignKey("LineId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Doctorantura.App.Models.Line", b =>
+                {
+                    b.HasOne("Doctorantura.App.Models.CalcTask", "CalcTask")
+                        .WithMany("Lines")
+                        .HasForeignKey("CalcTaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Doctorantura.App.Models.LineSum", b =>
+                {
+                    b.HasOne("Doctorantura.App.Models.CalcTask", "CalcTask")
+                        .WithMany("LineSums")
+                        .HasForeignKey("CalcTaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Doctorantura.App.Models.QamLine", b =>
+                {
+                    b.HasOne("Doctorantura.App.Models.CalcTask", "CalcTask")
+                        .WithMany("QamLines")
+                        .HasForeignKey("CalcTaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Doctorantura.App.Models.WLine", b =>
+                {
+                    b.HasOne("Doctorantura.App.Models.CalcTask", "CalcTask")
+                        .WithMany("WLines")
+                        .HasForeignKey("CalcTaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Doctorantura.App.Models.XLine", b =>
+                {
+                    b.HasOne("Doctorantura.App.Models.CalcTask", "CalcTask")
+                        .WithMany("XLines")
+                        .HasForeignKey("CalcTaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
